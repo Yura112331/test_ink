@@ -325,19 +325,24 @@
 document.getElementById('year').textContent = new Date().getFullYear()
 initParticles('particles')
 
-// Load releases
 async function loadReleases() {
   const grid = document.getElementById('releases-grid')
   const data = await fetchSpotify()
-  if (!data || !data.albums || !data.albums.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:80px 0;color:rgba(255,255,255,.4)">
-      <div style="font-size:2rem;margin-bottom:16px">♪</div>
-      <p>${t('releases.error')}</p>
-      <p style="font-size:.875rem;margin-top:8px">${t('releases.errorHint')}</p>
-    </div>`
+
+  if (!data || !data.tracks || !data.tracks.length) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:80px 0;color:rgba(255,255,255,.4)">
+        <div style="font-size:2rem;margin-bottom:16px">♪</div>
+        <p>Музика поки недоступна.</p>
+      </div>
+    `
     return
   }
-  grid.innerHTML = data.albums.slice(0,6).map(a => createReleaseCard(a)).join('')
+
+  grid.innerHTML = data.tracks
+    .map(track => createReleaseCard(track))
+    .join('')
+
   initReveal()
 }
 

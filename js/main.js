@@ -375,4 +375,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initCounters()
   initSlider()
   initFAQ()
+
+  loadSpotify()
 })

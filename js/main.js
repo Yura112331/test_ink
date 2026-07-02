@@ -298,28 +298,28 @@ function createReleaseCard(track) {
       <div class="release-img">
         ${
           img
-            ? `<img src="${img}" alt="${track.name}" loading="lazy">`
+            ? `<img src="${img}" alt="${album.name}" loading="lazy">`
             : `<div class="release-placeholder">♪</div>`
         }
         <span class="release-type-badge">Сингл</span>
       </div>
 
       <div class="release-info">
-        <div class="release-name">${track.name}</div>
+        <div class="release-name">${album.name}</div>
 
         <div class="release-date">
-          ${formatDate(track.album.release_date)}
+          ${formatDate(album.album.release_date)}
         </div>
 
         <button
-          onclick="toggleEmbed('${track.id}', this)"
+          onclick="toggleEmbed('${album.id}', this)"
           style="background:none;border:none;cursor:pointer;color:var(--blue);font-size:.75rem;margin-bottom:12px;padding:0;font-family:inherit">
           Слухати ▶
         </button>
 
-        <div id="embed-${track.id}" style="display:none;margin-bottom:12px">
+        <div id="embed-${album.id}" style="display:none;margin-bottom:12px">
           <iframe
-            src="https://open.spotify.com/embed/track/${track.id}?utm_source=generator&theme=0"
+            src="https://open.spotify.com/embed/track/${album.id}?utm_source=generator&theme=0"
             width="100%"
             height="80"
             frameborder="0"
@@ -330,7 +330,7 @@ function createReleaseCard(track) {
         </div>
 
         <a
-          href="${track.external_urls.spotify}"
+          href="${album.external_urls.spotify}"
           target="_blank"
           rel="noopener noreferrer"
           class="release-spotify-link">
@@ -358,7 +358,7 @@ async function loadSpotify() {
 
   const data = await fetchSpotify()
 
-  if (!data || !data.tracks || !data.tracks.length) {
+  if (!data || !data.albums || !data.albums.length) {
     container.innerHTML = `
       <p style="color:#888;text-align:center">
         Музика поки недоступна.
@@ -367,8 +367,8 @@ async function loadSpotify() {
     return
   }
 
-  container.innerHTML = data.tracks
-    .map(track => createReleaseCard(track))
+  container.innerHTML = data.albums
+    .map(album => createReleaseCard(album))
     .join('')
 }
 

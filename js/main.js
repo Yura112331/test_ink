@@ -1,5 +1,3 @@
-// ── НАЛАШТУВАННЯ ─────────────────────────────────────────
-// Після деплою на Vercel — вставте сюди ваш URL
 const SPOTIFY_API = 'https://inkbeat-api.vercel.app'
 
 const translations = {

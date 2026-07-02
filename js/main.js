@@ -344,6 +344,8 @@ function createReleaseCard(track) {
 
 function toggleEmbed(id, btn) {
   const embed = document.getElementById('embed-' + id)
+  if (!embed) return
+
   const isOpen = embed.style.display !== 'none'
   embed.style.display = isOpen ? 'none' : 'block'
   btn.textContent = isOpen ? 'Слухати ▶' : 'Сховати ↑'

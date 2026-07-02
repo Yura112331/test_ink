@@ -350,19 +350,23 @@ function toggleEmbed(id, btn) {
 }
 
 async function loadSpotify() {
-  const container = document.getElementById('spotify-releases')
+  const container = document.getElementById('releases-grid')
 
   if (!container) return
 
   const data = await fetchSpotify()
 
-  if (!data || !data.tracks) {
-    container.innerHTML = '<p>Не вдалося завантажити музику.</p>'
+  if (!data || !data.tracks || !data.tracks.length) {
+    container.innerHTML = `
+      <p style="color:#888;text-align:center">
+        Музика поки недоступна.
+      </p>
+    `
     return
   }
 
   container.innerHTML = data.tracks
-    .map(createReleaseCard)
+    .map(track => createReleaseCard(track))
     .join('')
 }
 

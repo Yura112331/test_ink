@@ -8,8 +8,8 @@ const SPOTIFY_API = 'https://inkbeat-api.vercel.app'
 // 2. Отримайте токен і вставте сюди
 // 3. Напишіть боту /start щоб отримати chat_id
 // 4. Отримайте chat_id: https://api.telegram.org/bot<TOKEN>/getUpdates
-const TELEGRAM_BOT_TOKEN = 'ВАШ_ТОКЕН_СЮДИ'
-const TELEGRAM_CHAT_ID = 'ВАШ_CHAT_ID_СЮДИ'
+const TELEGRAM_BOT_TOKEN = '8819832909:AAE6I9jGqQCS687-p2yxaCWexgUwkbeppSE'
+const TELEGRAM_CHAT_ID = '551074322'
 
 // ── ПЕРЕКЛАДИ ─────────────────────────────────────────────
 const translations = {

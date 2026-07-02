@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Дискографія | InkBeat</title>
-  <meta name="description" content="Вся музика InkBeat — альбоми, сингли та EP. Слухайте на Spotify."/>
+  <meta name="description" content="Вся музика InkBeat — треки та відео. Дивіться на YouTube."/>
   <link rel="icon" href="../public/favicon.ico"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -79,12 +79,6 @@
 <div class="disco-controls">
   <div class="container">
     <div class="disco-controls-inner">
-      <div class="filter-btns">
-        <button class="filter-btn active" data-filter="all">Всі</button>
-        <button class="filter-btn" data-filter="single">Сингли</button>
-        <button class="filter-btn" data-filter="album">Альбоми</button>
-        <button class="filter-btn" data-filter="compilation">EP</button>
-      </div>
       <div class="search-wrap">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input type="text" class="search-input" id="disco-search" placeholder="Пошук..."/>
@@ -149,40 +143,36 @@
 <script>
 document.getElementById('year').textContent = new Date().getFullYear()
 
-let allAlbums = []
-let currentFilter = 'all'
+let allVideos = []
 let currentSearch = ''
 
 function renderGrid() {
   const grid = document.getElementById('disco-grid')
-  const filtered = allAlbums.filter(a => {
-    const matchFilter = currentFilter === 'all' || a.album_type === currentFilter
-    const matchSearch = a.name.toLowerCase().includes(currentSearch.toLowerCase())
-    return matchFilter && matchSearch
-  })
+  const filtered = allVideos.filter(v =>
+    v.title.toLowerCase().includes(currentSearch.toLowerCase())
+  )
 
   if (!filtered.length) {
     grid.innerHTML = `<div class="disco-empty" style="grid-column:1/-1">Нічого не знайдено</div>`
     return
   }
 
-  grid.innerHTML = filtered.map(a => {
-    const img = a.images?.[0]?.url
-    const typeLabel = { album:'Альбом', single:'Сингл', compilation:'EP' }[a.album_type] || a.album_type
+  grid.innerHTML = filtered.map(v => {
+    const img = v.thumbnail
     return `
       <div class="release-card">
         <div class="release-img">
-          ${img ? `<img src="${img}" alt="${a.name}" loading="lazy">` : `<div class="release-placeholder">♪</div>`}
-          <span class="release-type-badge">${typeLabel}</span>
+          ${img ? `<img src="${img}" alt="${v.title}" loading="lazy">` : `<div class="release-placeholder">♪</div>`}
+          <span class="release-type-badge">YouTube</span>
         </div>
         <div class="release-info">
-          <div class="release-name">${a.name}</div>
-          <div class="release-date">${new Date(a.release_date).toLocaleDateString('uk-UA',{year:'numeric',month:'long',day:'numeric'})}</div>
-          <button onclick="toggleEmbed('${a.id}',this)" style="background:none;border:none;cursor:pointer;color:var(--blue);font-size:.75rem;margin-bottom:12px;padding:0">Слухати ▶</button>
-          <div id="embed-${a.id}" style="display:none;margin-bottom:12px">
-            <iframe src="https://open.spotify.com/embed/album/${a.id}?utm_source=generator&theme=0" width="100%" height="80" frameborder="0" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy" style="border-radius:12px;display:block"></iframe>
+          <div class="release-name">${v.title}</div>
+          <div class="release-date">${new Date(v.publishedAt).toLocaleDateString('uk-UA',{year:'numeric',month:'long',day:'numeric'})}</div>
+          <button onclick="toggleEmbed('${v.id}',this)" style="background:none;border:none;cursor:pointer;color:var(--blue);font-size:.75rem;margin-bottom:12px;padding:0">Слухати ▶</button>
+          <div id="embed-${v.id}" style="display:none;margin-bottom:12px">
+            <iframe src="https://www.youtube.com/embed/${v.id}" width="100%" height="200" frameborder="0" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy" style="border-radius:12px;display:block"></iframe>
           </div>
-          <a href="${a.external_urls.spotify}" target="_blank" rel="noopener noreferrer" class="release-spotify-link">Відкрити в Spotify ↗</a>
+          <a href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener noreferrer" class="release-spotify-link">Дивитись на YouTube ↗</a>
         </div>
       </div>`
   }).join('')
@@ -196,30 +186,20 @@ function toggleEmbed(id, btn) {
 }
 
 async function loadDiscography() {
-  const data = await fetchSpotify()
+  const data = await fetchYouTube()
   const countEl = document.getElementById('disco-count')
 
-  if (!data || !data.albums) {
-    document.getElementById('disco-grid').innerHTML = `<div class="disco-empty" style="grid-column:1/-1">♪<br><br>Не вдалося завантажити релізи.<br><small>Перевірте налаштування Spotify API.</small></div>`
+  if (!data || !data.videos) {
+    document.getElementById('disco-grid').innerHTML = `<div class="disco-empty" style="grid-column:1/-1">♪<br><br>Не вдалося завантажити релізи.<br><small>Перевірте налаштування YouTube API.</small></div>`
     if (countEl) countEl.textContent = 'Помилка завантаження'
     return
   }
 
-  allAlbums = data.albums
-  if (countEl) countEl.textContent = `${allAlbums.length} релізів • Автоматично зі Spotify`
+  allVideos = data.videos
+  if (countEl) countEl.textContent = `${allVideos.length} релізів • Автоматично з YouTube`
   renderGrid()
   initReveal()
 }
-
-// Filters
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'))
-    btn.classList.add('active')
-    currentFilter = btn.dataset.filter
-    renderGrid()
-  })
-})
 
 // Search
 document.getElementById('disco-search').addEventListener('input', e => {

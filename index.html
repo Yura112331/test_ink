@@ -14,10 +14,6 @@
   <link rel="preconnect" href="https://inkbeat-api.vercel.app"/>
   <link rel="dns-prefetch" href="https://w.soundcloud.com"/>
   <script>
-    // Стартуємо запит до SoundCloud API щойно почався розбір сторінки —
-    // до всього важкого HTML нижче (hero, картинки тощо). Це прибирає
-    // затримку, яка виникала через те, що на важких сторінках браузер
-    // довше доходить до <script> в кінці body.
     window.__soundcloudDataPromise = (function () {
       var controller = new AbortController()
       var timeout = setTimeout(function () { controller.abort() }, 10000)
@@ -38,11 +34,11 @@
 </head>
 <body>
 
-<!-- Cursor -->
+
 <div class="cursor-dot"></div>
 <div class="cursor-ring"></div>
 
-<!-- Loading -->
+
 <div id="loading-screen">
   <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(0,191,255,.08),transparent 60%);pointer-events:none"></div>
   <div class="loading-letters">
@@ -58,7 +54,7 @@
   <div class="loading-pct">0%</div>
 </div>
 
-<!-- Navbar -->
+
 <nav id="navbar">
   <div class="nav-inner">
     <a href="index.html" class="nav-logo gradient-text">INKBEAT</a>
@@ -97,7 +93,6 @@
   </div>
 </div>
 
-<!-- ── HERO ─────────────────────────── -->
 <section id="hero">
   <canvas id="particles"></canvas>
   <div class="hero-orb1"></div>
@@ -125,7 +120,6 @@
   </div>
 </section>
 
-<!-- ── STATS ──────────────────────────── -->
 <section id="stats">
   <div class="container">
     <div class="stats-grid">
@@ -149,7 +143,6 @@
   </div>
 </section>
 
-<!-- ── LATEST RELEASES ──────────────── -->
 <section class="section" style="background:var(--s100)">
   <div class="container">
     <div class="releases-header reveal">
@@ -160,7 +153,6 @@
       <a href="pages/discography.html" class="releases-link" data-i18n="releases.all">Вся дискографія →</a>
     </div>
     <div id="releases-grid" class="releases-grid">
-      <!-- Завантаження: та ж візуальна мова, що й у головному прелоадері -->
       <div class="releases-loading" id="releases-loading">
         <div class="skeleton-eq skeleton-eq-standalone"><span></span><span></span><span></span><span></span><span></span></div>
         <div class="loading-bar-wrap"><div class="loading-bar" style="width:0%"></div></div>
@@ -171,7 +163,6 @@
   </div>
 </section>
 
-<!-- ── SERVICES PREVIEW ─────────────── -->
 <section class="section">
   <div class="container">
     <div class="reveal" style="text-align:center;margin-bottom:64px">
@@ -202,7 +193,6 @@
   </div>
 </section>
 
-<!-- ── TESTIMONIALS ──────────────────── -->
 <section class="section" style="background:var(--s100)">
   <div class="container" style="max-width:900px">
     <div style="text-align:center;margin-bottom:64px" class="reveal">
@@ -248,7 +238,6 @@
   </div>
 </section>
 
-<!-- ── FAQ ──────────────────────────── -->
 <section class="section">
   <div class="container" style="max-width:780px">
     <div style="text-align:center;margin-bottom:64px" class="reveal">
@@ -284,7 +273,6 @@
   </div>
 </section>
 
-<!-- ── CTA ──────────────────────────── -->
 <section class="cta-section">
   <div class="cta-orb"></div>
   <div class="container" style="position:relative;z-index:10">
@@ -300,7 +288,6 @@
   </div>
 </section>
 
-<!-- ── FOOTER ──────────────────────── -->
 <footer>
   <div class="container">
     <div class="footer-grid">

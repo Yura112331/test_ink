@@ -1,17 +1,8 @@
-// ── НАЛАШТУВАННЯ ─────────────────────────────────────────
-// API розгорнутий на Vercel (inkbeat-api)
 const API_BASE = 'https://inkbeat-api.vercel.app'
 
-// Проміс, який резолвиться, коли динамічний контент сторінки
-// (список релізів на головній/дискографії) реально завантажився.
-// Екран завантаження чекає саме на нього, а не на фейковий таймер.
 window.__contentReadyResolve = null
 window.__contentReadyPromise = new Promise(resolve => { window.__contentReadyResolve = resolve })
 
-// Запит до SoundCloud API вже стартував у <head> (див. index.html /
-// discography.html) — тут просто перевикористовуємо той самий проміс,
-// а не починаємо новий. Якщо з якоїсь причини він не стартував там —
-// підстраховуємось і запускаємо тут.
 function getSoundCloudData() {
   if (!window.__soundcloudDataPromise) {
     window.__soundcloudDataPromise = fetchSoundCloud()
@@ -20,16 +11,9 @@ function getSoundCloudData() {
 }
 getSoundCloudData()
 
-// ── TELEGRAM BOT ─────────────────────────────────────────
-// Замініть на свої дані:
-// 1. Створіть бота через @BotFather в Telegram
-// 2. Отримайте токен і вставте сюди
-// 3. Напишіть боту /start щоб отримати chat_id
-// 4. Отримайте chat_id: https://api.telegram.org/bot<TOKEN>/getUpdates
 const TELEGRAM_BOT_TOKEN = '8819832909:AAE6I9jGqQCS687-p2yxaCWexgUwkbeppSE'
 const TELEGRAM_CHAT_ID = '551074322'
 
-// ── ПЕРЕКЛАДИ ─────────────────────────────────────────────
 const translations = {
   uk: {
     nav: { home:'Головна', about:'Про мене', discography:'Дискографія', services:'Послуги', portfolio:'Портфоліо', contact:'Контакти', order:'Замовити' },
@@ -81,7 +65,6 @@ function updateLangBtn() {
   document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('active', currentLang === 'en'))
 }
 
-// ── LOADING SCREEN ────────────────────────────────────────
 function initLoading() {
   const screen = document.getElementById('loading-screen')
   if (!screen) return
@@ -96,9 +79,6 @@ function initLoading() {
     if (pct) pct.textContent = Math.round(progress) + '%'
   }
 
-  // Плавно повзе до 90%, поки чекаємо реальних подій завантаження —
-  // так смуга прогресу не виглядає "застряглою", навіть якщо
-  // мережа повільна
   function trickle() {
     if (finished) return
     setProgress(Math.min(progress + (90 - progress) * 0.06 + 0.3, 90))
@@ -111,11 +91,6 @@ function initLoading() {
     else window.addEventListener('load', () => resolve(), { once: true })
   })
 
-  // Запобіжник: якщо подія load чомусь не настає (повільна мережа,
-  // зависла картинка тощо) — все одно ховаємо екран через 4 сек.
-  // Динамічні списки релізів (SoundCloud) навмисно НЕ блокують цей
-  // екран: у них вже є скелетон-заглушка в розмітці, і вони
-  // підвантажуються у фоні вже після показу сторінки.
   const safetyTimeout = new Promise(resolve => setTimeout(resolve, 4000))
 
   Promise.race([windowLoaded, safetyTimeout]).then(() => {
@@ -125,7 +100,6 @@ function initLoading() {
   })
 }
 
-// ── CURSOR ────────────────────────────────────────────────
 function initCursor() {
   if (window.innerWidth <= 768) return
   const dot = document.querySelector('.cursor-dot')
@@ -151,17 +125,16 @@ function initCursor() {
   animRing()
 }
 
-// ── NAVBAR + MOBILE MENU ──────────────────────────────────
 function initNavbar() {
   const navbar = document.getElementById('navbar')
   if (!navbar) return
 
-  // Scroll effect
+  
   window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 40)
   })
 
-  // ── MOBILE MENU FIX ──
+  
   const burger = document.querySelector('.burger')
   const mobileMenu = document.querySelector('.mobile-menu')
   const mobileClose = document.querySelector('.mobile-close')
@@ -179,22 +152,18 @@ function initNavbar() {
   burger?.addEventListener('click', openMenu)
   mobileClose?.addEventListener('click', closeMenu)
 
-  // Закриваємо при кліку на посилання
   mobileMenu?.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', closeMenu)
   })
 
-  // Закриваємо при кліку поза меню (на темний фон)
   mobileMenu?.addEventListener('click', function(e) {
     if (e.target === mobileMenu) closeMenu()
   })
 
-  // Закриваємо клавішею Escape
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeMenu()
   })
 
-  // Lang switcher
   document.querySelectorAll('.lang-toggle').forEach(btn => {
     btn.addEventListener('click', () => setLang(btn.dataset.lang))
   })
@@ -203,7 +172,6 @@ function initNavbar() {
   setLang(currentLang)
 }
 
-// ── SCROLL REVEAL ─────────────────────────────────────────
 function initReveal() {
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
@@ -217,7 +185,6 @@ function initReveal() {
   document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => obs.observe(el))
 }
 
-// ── COUNTERS ──────────────────────────────────────────────
 function initCounters() {
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
@@ -241,7 +208,6 @@ function initCounters() {
   document.querySelectorAll('[data-to]').forEach(el => obs.observe(el))
 }
 
-// ── TESTIMONIALS ──────────────────────────────────────────
 function initSlider() {
   const cards = document.querySelectorAll('.testimonial-card')
   const dots = document.querySelectorAll('.dot')
@@ -262,7 +228,7 @@ function initSlider() {
   setInterval(() => show((idx + 1) % cards.length), 5000)
 }
 
-// ── FAQ ───────────────────────────────────────────────────
+
 function initFAQ() {
   document.querySelectorAll('.faq-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -281,7 +247,6 @@ function initFAQ() {
   })
 }
 
-// ── TELEGRAM FORM ─────────────────────────────────────────
 async function sendToTelegram(name, email, subject, message) {
   const text = `
 🎵 *Нове повідомлення з сайту InkBeat*
@@ -308,7 +273,6 @@ ${message}
   return data
 }
 
-// ── SOUNDCLOUD ────────────────────────────────────────────
 async function fetchSoundCloud() {
   try {
     const controller = new AbortController()
@@ -405,7 +369,6 @@ function toggleEmbed(id, widgetUrl) {
     return
   }
 
-  // Перший клік: показуємо завантаження, поки плеєр не підвантажиться
   btn.classList.add('is-loading')
   btn.disabled = true
 
@@ -429,9 +392,6 @@ function toggleEmbed(id, widgetUrl) {
   embed.appendChild(iframe)
 }
 
-// ── ІНЛАЙН-ЗАВАНТАЖУВАЧ БЛОКУ МУЗИКИ ───────────────────────
-// Той самий принцип, що й у #loading-screen: плавно повзе до 90%,
-// поки чекаємо реальних даних, і застрибує на 100%, коли вони прийшли.
 function initInlineLoader(scope) {
   const bar = scope.querySelector('.loading-bar')
   const pct = scope.querySelector('.loading-pct')
@@ -464,10 +424,6 @@ async function loadSoundCloud() {
     return
   }
 
-  // Грід вже показує скелетон-заглушку в розмітці, тож не тримаємо
-  // весь сайт за екраном завантаження в очікуванні зовнішнього API —
-  // просто підвантажуємо треки у фоні й підміняємо скелетон, коли
-  // дані прийдуть (або покажемо повідомлення про помилку).
   const loaderEl = document.getElementById('releases-loading')
   const finishLoader = loaderEl ? initInlineLoader(loaderEl) : null
 
@@ -494,7 +450,6 @@ async function loadSoundCloud() {
     .join('')
 }
 
-// ── INIT ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initLoading()
   initCursor()

@@ -23,7 +23,7 @@ const translations = {
     nav: { home:'Головна', about:'Про мене', discography:'Дискографія', services:'Послуги', portfolio:'Портфоліо', contact:'Контакти', order:'Замовити' },
     hero: { badge:'Незалежний артист', subtitle:'Музичний артист • Автор пісень • Автор текстів', listen:'Слухати музику', order:'Замовити пісню', contact:"Зв'язатися →" },
     stats: { releases:'Релізів', streams:'Прослуховувань', since:'Рік початку', platforms:'Платформ' },
-    releases: { label:'Останні релізи', title:'Моя музика', all:'Вся дискографія →', spotify:'Слухати на SoundCloud', error:'Не вдалося завантажити релізи.', errorHint:'SoundCloud API недоступний.' },
+    releases: { label:'Останні релізи', title:'Моя музика', all:'Вся дискографія →', spotify:'Слухати на SoundCloud', error:'Не вдалося завантажити релізи.', errorHint:'SoundCloud API недоступний.', loading:'Завантажую треки з SoundCloud…' },
     services: { label:'Послуги', title:'Творчі послуги', subtitle:'Допомагаю артистам та брендам знаходити своє звучання', more:'Детальніше про послуги →' },
     testimonials: { label:'Відгуки', title:'Що кажуть клієнти' },
     faq: { label:'FAQ', title:'Часті питання' },
@@ -35,7 +35,7 @@ const translations = {
     nav: { home:'Home', about:'About', discography:'Discography', services:'Services', portfolio:'Portfolio', contact:'Contact', order:'Order' },
     hero: { badge:'Independent Artist', subtitle:'Music Artist • Songwriter • Lyricist', listen:'Listen to Music', order:'Order a Song', contact:'Contact →' },
     stats: { releases:'Releases', streams:'Streams', since:'Started', platforms:'Platforms' },
-    releases: { label:'Latest Releases', title:'My Music', all:'Full Discography →', spotify:'Listen on SoundCloud', error:'Failed to load releases.', errorHint:'SoundCloud API unavailable.' },
+    releases: { label:'Latest Releases', title:'My Music', all:'Full Discography →', spotify:'Listen on SoundCloud', error:'Failed to load releases.', errorHint:'SoundCloud API unavailable.', loading:'Loading tracks from SoundCloud…' },
     services: { label:'Services', title:'Creative Services', subtitle:'Helping artists and brands find their sound', more:'View all services →' },
     testimonials: { label:'Testimonials', title:'What Clients Say' },
     faq: { label:'FAQ', title:'Frequently Asked Questions' },
@@ -99,16 +99,14 @@ function initLoading() {
     else window.addEventListener('load', () => resolve(), { once: true })
   })
 
-  const contentReady = window.__contentReadyPromise || Promise.resolve()
+  // Запобіжник: якщо подія load чомусь не настає (повільна мережа,
+  // зависла картинка тощо) — все одно ховаємо екран через 4 сек.
+  // Динамічні списки релізів (SoundCloud) навмисно НЕ блокують цей
+  // екран: у них вже є скелетон-заглушка в розмітці, і вони
+  // підвантажуються у фоні вже після показу сторінки.
+  const safetyTimeout = new Promise(resolve => setTimeout(resolve, 4000))
 
-  // Запобіжник: якщо щось пішло не так і контент завис —
-  // все одно ховаємо екран завантаження через 15 сек
-  const safetyTimeout = new Promise(resolve => setTimeout(resolve, 15000))
-
-  Promise.race([
-    Promise.all([windowLoaded, contentReady]),
-    safetyTimeout
-  ]).then(() => {
+  Promise.race([windowLoaded, safetyTimeout]).then(() => {
     finished = true
     setProgress(100)
     setTimeout(() => screen.classList.add('hidden'), 350)
@@ -423,14 +421,13 @@ async function loadSoundCloud() {
   const container = document.getElementById('releases-grid')
 
   if (!container) {
-    // На сторінках з власним завантаженням списку (напр. дискографія)
-    // проміс резолвить сама сторінка — тут нічого чекати не потрібно
-    if (!document.getElementById('disco-grid') && window.__contentReadyResolve) {
-      window.__contentReadyResolve()
-    }
     return
   }
 
+  // Грід вже показує скелетон-заглушку в розмітці, тож не тримаємо
+  // весь сайт за екраном завантаження в очікуванні зовнішнього API —
+  // просто підвантажуємо треки у фоні й підміняємо скелетон, коли
+  // дані прийдуть (або покажемо повідомлення про помилку).
   const data = await fetchSoundCloud()
 
   if (!data || !data.tracks || !data.tracks.length) {
@@ -439,7 +436,6 @@ async function loadSoundCloud() {
         Музика поки недоступна.
       </p>
     `
-    if (window.__contentReadyResolve) window.__contentReadyResolve()
     return
   }
 
@@ -447,8 +443,6 @@ async function loadSoundCloud() {
     .slice(0, 6)
     .map(track => createReleaseCard(track))
     .join('')
-
-  if (window.__contentReadyResolve) window.__contentReadyResolve()
 }
 
 // ── INIT ──────────────────────────────────────────────────

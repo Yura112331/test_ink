@@ -17,7 +17,7 @@ const translations = {
     nav: { home:'Головна', about:'Про мене', discography:'Дискографія', services:'Послуги', portfolio:'Портфоліо', contact:'Контакти', order:'Замовити' },
     hero: { badge:'Незалежний артист', subtitle:'Музичний артист • Автор пісень • Автор текстів', listen:'Слухати музику', order:'Замовити пісню', contact:"Зв'язатися →" },
     stats: { releases:'Релізів', streams:'Прослуховувань', since:'Рік початку', platforms:'Платформ' },
-    releases: { label:'Останні релізи', title:'Моя музика', all:'Вся дискографія →', spotify:'Дивитись на YouTube', error:'Не вдалося завантажити релізи.', errorHint:'YouTube API недоступний.' },
+    releases: { label:'Останні релізи', title:'Моя музика', all:'Вся дискографія →', spotify:'Слухати на SoundCloud', error:'Не вдалося завантажити релізи.', errorHint:'SoundCloud API недоступний.' },
     services: { label:'Послуги', title:'Творчі послуги', subtitle:'Допомагаю артистам та брендам знаходити своє звучання', more:'Детальніше про послуги →' },
     testimonials: { label:'Відгуки', title:'Що кажуть клієнти' },
     faq: { label:'FAQ', title:'Часті питання' },
@@ -29,7 +29,7 @@ const translations = {
     nav: { home:'Home', about:'About', discography:'Discography', services:'Services', portfolio:'Portfolio', contact:'Contact', order:'Order' },
     hero: { badge:'Independent Artist', subtitle:'Music Artist • Songwriter • Lyricist', listen:'Listen to Music', order:'Order a Song', contact:'Contact →' },
     stats: { releases:'Releases', streams:'Streams', since:'Started', platforms:'Platforms' },
-    releases: { label:'Latest Releases', title:'My Music', all:'Full Discography →', spotify:'Watch on YouTube', error:'Failed to load releases.', errorHint:'YouTube API unavailable.' },
+    releases: { label:'Latest Releases', title:'My Music', all:'Full Discography →', spotify:'Listen on SoundCloud', error:'Failed to load releases.', errorHint:'SoundCloud API unavailable.' },
     services: { label:'Services', title:'Creative Services', subtitle:'Helping artists and brands find their sound', more:'View all services →' },
     testimonials: { label:'Testimonials', title:'What Clients Say' },
     faq: { label:'FAQ', title:'Frequently Asked Questions' },
@@ -265,13 +265,13 @@ ${message}
   return data
 }
 
-// ── YOUTUBE ───────────────────────────────────────────────
-async function fetchYouTube() {
+// ── SOUNDCLOUD ────────────────────────────────────────────
+async function fetchSoundCloud() {
   try {
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 10000) // 10 сек таймаут
 
-    const res = await fetch(`${API_BASE}/api/youtube`, {
+    const res = await fetch(`${API_BASE}/api/soundcloud`, {
       signal: controller.signal
     })
     clearTimeout(timeout)
@@ -279,7 +279,7 @@ async function fetchYouTube() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     return await res.json()
   } catch (err) {
-    console.error('YouTube fetch error:', err.message)
+    console.error('SoundCloud fetch error:', err.message)
     return null
   }
 }
@@ -290,52 +290,57 @@ function formatDate(dateStr) {
   })
 }
 
-function createReleaseCard(video) {
-  const img = video.thumbnail
+function scWidgetUrl(track) {
+  return `https://w.soundcloud.com/player/?url=${encodeURIComponent(track.permalinkUrl)}` +
+    `&color=%230038ff&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=false`
+}
+
+function createReleaseCard(track) {
+  const img = track.artwork
 
   return `
     <div class="release-card">
       <div class="release-img">
         ${
           img
-            ? `<img src="${img}" alt="${video.title}" loading="lazy">`
+            ? `<img src="${img}" alt="${track.title}" loading="lazy">`
             : `<div class="release-placeholder">♪</div>`
         }
-        <span class="release-type-badge">YouTube</span>
+        <span class="release-type-badge">SoundCloud</span>
       </div>
 
       <div class="release-info">
-        <div class="release-name">${video.title}</div>
+        <div class="release-name">${track.title}</div>
 
         <div class="release-date">
-          ${formatDate(video.publishedAt)}
+          ${formatDate(track.createdAt)}
         </div>
 
         <button
-          onclick="toggleEmbed('${video.id}', this)"
+          onclick="toggleEmbed('${track.id}', this)"
           style="background:none;border:none;cursor:pointer;color:var(--blue);font-size:.75rem;margin-bottom:12px;padding:0;font-family:inherit">
           Слухати ▶
         </button>
 
-        <div id="embed-${video.id}" style="display:none;margin-bottom:12px">
+        <div id="embed-${track.id}" style="display:none;margin-bottom:12px">
           <iframe
-            src="https://www.youtube.com/embed/${video.id}"
+            src="${scWidgetUrl(track)}"
             width="100%"
-            height="200"
+            height="166"
             frameborder="0"
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            allow="autoplay"
             loading="lazy"
             style="border-radius:12px">
           </iframe>
         </div>
 
         <a
-          href="https://www.youtube.com/watch?v=${video.id}"
+          href="${track.permalinkUrl}"
           target="_blank"
           rel="noopener noreferrer"
           class="release-spotify-link">
 
-          Дивитись на YouTube ↗
+          Слухати на SoundCloud ↗
         </a>
       </div>
     </div>
@@ -351,14 +356,14 @@ function toggleEmbed(id, btn) {
   btn.textContent = isOpen ? 'Слухати ▶' : 'Сховати ↑'
 }
 
-async function loadYouTube() {
+async function loadSoundCloud() {
   const container = document.getElementById('releases-grid')
 
   if (!container) return
 
-  const data = await fetchYouTube()
+  const data = await fetchSoundCloud()
 
-  if (!data || !data.videos || !data.videos.length) {
+  if (!data || !data.tracks || !data.tracks.length) {
     container.innerHTML = `
       <p style="color:#888;text-align:center">
         Музика поки недоступна.
@@ -367,9 +372,9 @@ async function loadYouTube() {
     return
   }
 
-  container.innerHTML = data.videos
+  container.innerHTML = data.tracks
     .slice(0, 6)
-    .map(video => createReleaseCard(video))
+    .map(track => createReleaseCard(track))
     .join('')
 }
 
@@ -382,5 +387,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initCounters()
   initSlider()
   initFAQ()
-  loadYouTube()
+  loadSoundCloud()
 })

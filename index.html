@@ -140,11 +140,13 @@
       <a href="pages/discography.html" class="releases-link" data-i18n="releases.all">Вся дискографія →</a>
     </div>
     <div id="releases-grid" class="releases-grid">
-      <!-- Skeleton -->
-      <div class="release-card"><div class="skeleton" style="aspect-ratio:1;position:relative"><div class="skeleton-eq"><span></span><span></span><span></span><span></span><span></span></div></div><div style="padding:20px"><div class="skeleton" style="height:20px;width:75%;margin-bottom:8px"></div><div class="skeleton" style="height:14px;width:50%"></div></div></div>
-      <div class="release-card"><div class="skeleton" style="aspect-ratio:1;position:relative"><div class="skeleton-eq"><span></span><span></span><span></span><span></span><span></span></div></div><div style="padding:20px"><div class="skeleton" style="height:20px;width:75%;margin-bottom:8px"></div><div class="skeleton" style="height:14px;width:50%"></div></div></div>
-      <div class="release-card"><div class="skeleton" style="aspect-ratio:1;position:relative"><div class="skeleton-eq"><span></span><span></span><span></span><span></span><span></span></div></div><div style="padding:20px"><div class="skeleton" style="height:20px;width:75%;margin-bottom:8px"></div><div class="skeleton" style="height:14px;width:50%"></div></div></div>
-      <div class="releases-loading-label" id="releases-loading-label" data-i18n="releases.loading">Завантажую треки з SoundCloud…</div>
+      <!-- Завантаження: та ж візуальна мова, що й у головному прелоадері -->
+      <div class="releases-loading" id="releases-loading">
+        <div class="skeleton-eq skeleton-eq-standalone"><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="loading-bar-wrap"><div class="loading-bar" style="width:0%"></div></div>
+        <div class="loading-pct">0%</div>
+        <div class="releases-loading-label" data-i18n="releases.loading">Завантажую треки з SoundCloud…</div>
+      </div>
     </div>
   </div>
 </section>

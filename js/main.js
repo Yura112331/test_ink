@@ -8,14 +8,10 @@ const API_BASE = 'https://inkbeat-api.vercel.app'
 window.__contentReadyResolve = null
 window.__contentReadyPromise = new Promise(resolve => { window.__contentReadyResolve = resolve })
 
-// Стартуємо запит до SoundCloud API одразу, як тільки цей скрипт
-// виконується — не чекаючи DOMContentLoaded і решти ініціалізації.
-// Це паралелить мережевий запит із рештою завантаження сторінки,
-// замість того щоб починати його вже після того, як усе інше
-// відпрацювало. Проміс мемоізується, тож і index.html, і
-// discography.html використовують один і той самий запит, а не
-// роблять по одному кожен.
-window.__soundcloudDataPromise = null
+// Запит до SoundCloud API вже стартував у <head> (див. index.html /
+// discography.html) — тут просто перевикористовуємо той самий проміс,
+// а не починаємо новий. Якщо з якоїсь причини він не стартував там —
+// підстраховуємось і запускаємо тут.
 function getSoundCloudData() {
   if (!window.__soundcloudDataPromise) {
     window.__soundcloudDataPromise = fetchSoundCloud()
@@ -475,7 +471,10 @@ async function loadSoundCloud() {
   const loaderEl = document.getElementById('releases-loading')
   const finishLoader = loaderEl ? initInlineLoader(loaderEl) : null
 
-  const data = await getSoundCloudData()
+  const [data] = await Promise.all([
+    getSoundCloudData(),
+    new Promise(r => setTimeout(r, 5000)) // мінімум 5 сек показуємо анімацію
+  ])
   if (finishLoader) finishLoader()
 
   if (!data || !data.tracks || !data.tracks.length) {

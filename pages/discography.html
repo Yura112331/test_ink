@@ -98,12 +98,13 @@
 <section class="section" style="background:var(--s100)">
   <div class="container">
     <div id="disco-grid" class="disco-grid">
-      <!-- Skeleton -->
-      <div class="release-card"><div class="skeleton" style="aspect-ratio:1;position:relative"><div class="skeleton-eq"><span></span><span></span><span></span><span></span><span></span></div></div><div style="padding:20px"><div class="skeleton" style="height:20px;width:75%;margin-bottom:8px"></div><div class="skeleton" style="height:14px;width:50%"></div></div></div>
-      <div class="release-card"><div class="skeleton" style="aspect-ratio:1;position:relative"><div class="skeleton-eq"><span></span><span></span><span></span><span></span><span></span></div></div><div style="padding:20px"><div class="skeleton" style="height:20px;width:75%;margin-bottom:8px"></div><div class="skeleton" style="height:14px;width:50%"></div></div></div>
-      <div class="release-card"><div class="skeleton" style="aspect-ratio:1;position:relative"><div class="skeleton-eq"><span></span><span></span><span></span><span></span><span></span></div></div><div style="padding:20px"><div class="skeleton" style="height:20px;width:75%;margin-bottom:8px"></div><div class="skeleton" style="height:14px;width:50%"></div></div></div>
-      <div class="release-card"><div class="skeleton" style="aspect-ratio:1;position:relative"><div class="skeleton-eq"><span></span><span></span><span></span><span></span><span></span></div></div><div style="padding:20px"><div class="skeleton" style="height:20px;width:75%;margin-bottom:8px"></div><div class="skeleton" style="height:14px;width:50%"></div></div></div>
-      <div class="releases-loading-label" id="disco-loading-label" data-i18n="releases.loading">Завантажую треки з SoundCloud…</div>
+      <!-- Завантаження: та ж візуальна мова, що й у головному прелоадері -->
+      <div class="releases-loading" id="disco-loading">
+        <div class="skeleton-eq skeleton-eq-standalone"><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="loading-bar-wrap"><div class="loading-bar" style="width:0%"></div></div>
+        <div class="loading-pct">0%</div>
+        <div class="releases-loading-label" data-i18n="releases.loading">Завантажую треки з SoundCloud…</div>
+      </div>
     </div>
   </div>
 </section>
@@ -169,8 +170,13 @@ function renderGrid() {
 }
 
 async function loadDiscography() {
-  const data = await fetchSoundCloud()
+  const loaderEl = document.getElementById('disco-loading')
+  const finishLoader = loaderEl ? initInlineLoader(loaderEl) : null
+
+  const data = await getSoundCloudData()
   const countEl = document.getElementById('disco-count')
+  if (finishLoader) finishLoader()
+  await new Promise(r => setTimeout(r, 150))
 
   if (!data || !data.tracks) {
     document.getElementById('disco-grid').innerHTML = `<div class="disco-empty" style="grid-column:1/-1">♪<br><br>Не вдалося завантажити релізи.<br><small>Перевірте налаштування SoundCloud API.</small></div>`

@@ -972,15 +972,29 @@ footer::before {
 
 /* Текст-підказка під сіткою релізів, поки триває фонове завантаження */
 .releases-loading-label {
-  grid-column: 1 / -1;
   text-align: center;
-  margin-top: 4px;
   font-family: 'JetBrains Mono', monospace;
   font-size: .75rem;
   letter-spacing: .05em;
   color: rgba(255,255,255,.35);
 }
-.releases-loading-label.hidden { display: none; }
+
+/* Інлайн-завантажувач блоку музики — та сама візуальна мова,
+   що й у повноекранному #loading-screen (градієнтний бар +
+   відсотки), тільки в мініатюрі й прив'язана до цього блоку. */
+.releases-loading {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 72px 20px;
+}
+.skeleton-eq-standalone {
+  position: static;
+  inset: auto;
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {

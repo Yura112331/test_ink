@@ -79,7 +79,6 @@
   </div>
 </div>
 
-<!-- Header -->
 <section class="page-header">
   <div class="page-header-orb" style="top:40%;right:30%;width:500px;height:500px;background:radial-gradient(circle,#00BFFF,transparent 70%)"></div>
   <div class="container">
@@ -90,12 +89,11 @@
   </div>
 </section>
 
-<!-- Content -->
 <section class="section" style="background:var(--s100)">
   <div class="container">
     <div class="contact-grid">
 
-      <!-- Left: info -->
+      
       <div class="reveal-left">
         <div style="margin-bottom:48px">
           <div class="footer-col-title" style="margin-bottom:16px">Email</div>
@@ -147,7 +145,6 @@
         </div>
       </div>
 
-      <!-- Right: Form -->
       <div class="reveal-right">
         <form class="contact-form" id="contact-form" onsubmit="handleSubmit(event)">
 
@@ -191,7 +188,6 @@
   </div>
 </section>
 
-<!-- Footer -->
 <footer>
   <div class="container">
     <div class="footer-grid">
@@ -258,7 +254,6 @@ async function handleSubmit(e) {
   const subject = document.getElementById('f-subject').value.trim()
   const message = document.getElementById('f-message').value.trim()
 
-  // Валідація
   let valid = true
   if (!name)    { showError('name', "Введіть ваше ім'я"); valid = false }
   if (!email)   { showError('email', 'Введіть email'); valid = false }
@@ -290,7 +285,6 @@ async function handleSubmit(e) {
   } catch (err) {
     console.error('Telegram error:', err)
 
-    // Якщо токен не налаштований — показуємо email
     if (TELEGRAM_BOT_TOKEN === 'ВАШ_ТОКЕН_СЮДИ') {
       statusEl.className = 'form-status'
       statusEl.style.cssText = 'display:flex;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:#fbbf24;padding:16px;border-radius:12px;gap:12px;margin-bottom:20px'

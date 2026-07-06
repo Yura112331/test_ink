@@ -872,16 +872,41 @@ bgTypeSel.addEventListener('change', () => { updateBgFieldsVisibility(); checkRe
 
 function loadImageFile(f){
   if(!f) return;
+  imgReady = false;
   imgName.textContent = f.name;
+  statusEl.textContent = 'Завантажую зображення...';
   const url = URL.createObjectURL(f);
   const image = new Image();
-  image.onload = () => { img = image; imgReady = true; checkReady(); };
+  let settled = false;
+  const timeoutId = setTimeout(() => {
+    if(settled) return;
+    settled = true;
+    imgName.textContent = 'не обрано';
+    statusEl.textContent = 'Не вдалося завантажити зображення (формат не підтримується браузером). Спробуй JPG, PNG або WebP.';
+  }, 12000);
+  image.onload = () => {
+    if(settled) return;
+    settled = true;
+    clearTimeout(timeoutId);
+    img = image; imgReady = true;
+    statusEl.textContent = 'Зображення завантажено.';
+    checkReady();
+  };
+  image.onerror = () => {
+    if(settled) return;
+    settled = true;
+    clearTimeout(timeoutId);
+    imgName.textContent = 'не обрано';
+    statusEl.textContent = 'Не вдалося завантажити це зображення. Спробуй JPG, PNG або WebP (HEIC з iPhone часто не підтримується браузером).';
+  };
   image.src = url;
 }
 
 function loadVideoFile(f){
   if(!f) return;
+  videoReady = false;
   videoName.textContent = f.name;
+  statusEl.textContent = 'Завантажую відео...';
   const url = URL.createObjectURL(f);
   if(bgVideo){ bgVideo.pause(); }
   bgVideo = document.createElement('video');
@@ -889,19 +914,57 @@ function loadVideoFile(f){
   bgVideo.muted = true;
   bgVideo.loop = true;
   bgVideo.playsInline = true;
+  let settled = false;
+  const timeoutId = setTimeout(() => {
+    if(settled) return;
+    settled = true;
+    videoName.textContent = 'не обрано';
+    statusEl.textContent = 'Не вдалося завантажити відео (формат не підтримується браузером). Спробуй MP4 (H.264).';
+  }, 15000);
   bgVideo.addEventListener('loadeddata', () => {
+    if(settled) return;
+    settled = true;
+    clearTimeout(timeoutId);
     videoReady = true;
+    statusEl.textContent = 'Відео завантажено.';
     bgVideo.play().catch(()=>{});
     checkReady();
+  });
+  bgVideo.addEventListener('error', () => {
+    if(settled) return;
+    settled = true;
+    clearTimeout(timeoutId);
+    videoName.textContent = 'не обрано';
+    statusEl.textContent = 'Не вдалося завантажити це відео. Спробуй MP4 (H.264) — деякі формати з iPhone (HEVC/MOV) браузер може не підтримувати.';
   });
 }
 
 function loadCenterImgFile(f){
   if(!f) return;
+  centerImgReady = false;
   centerImgName.textContent = f.name;
   const url = URL.createObjectURL(f);
   const image = new Image();
-  image.onload = () => { centerImg = image; centerImgReady = true; };
+  let settled = false;
+  const timeoutId = setTimeout(() => {
+    if(settled) return;
+    settled = true;
+    centerImgName.textContent = 'не обрано (візьме обкладинку)';
+    statusEl.textContent = 'Не вдалося завантажити картинку для кола. Спробуй JPG, PNG або WebP.';
+  }, 12000);
+  image.onload = () => {
+    if(settled) return;
+    settled = true;
+    clearTimeout(timeoutId);
+    centerImg = image; centerImgReady = true;
+  };
+  image.onerror = () => {
+    if(settled) return;
+    settled = true;
+    clearTimeout(timeoutId);
+    centerImgName.textContent = 'не обрано (візьме обкладинку)';
+    statusEl.textContent = 'Не вдалося завантажити цю картинку. Спробуй JPG, PNG або WebP.';
+  };
   image.src = url;
 }
 
@@ -978,17 +1041,36 @@ hookBtn.addEventListener('click', async () => {
 
 function loadAudioFile(f){
   if(!f) return;
+  audioReady = false;
   audioFileRef = f;
   audioName.textContent = f.name;
+  statusEl.textContent = 'Завантажую аудіо...';
   const url = URL.createObjectURL(f);
   if(audioEl){ audioEl.pause(); }
   audioEl = new Audio();
   audioEl.src = url;
   audioEl.crossOrigin = 'anonymous';
+  let settled = false;
+  const timeoutId = setTimeout(() => {
+    if(settled) return;
+    settled = true;
+    audioName.textContent = 'не обрано';
+    statusEl.textContent = 'Не вдалося завантажити аудіо (формат не підтримується браузером). Спробуй MP3 або WAV.';
+  }, 15000);
   audioEl.addEventListener('loadedmetadata', () => {
+    if(settled) return;
+    settled = true;
+    clearTimeout(timeoutId);
     audioReady = true;
     setupTrimRange(audioEl.duration);
     checkReady();
+  });
+  audioEl.addEventListener('error', () => {
+    if(settled) return;
+    settled = true;
+    clearTimeout(timeoutId);
+    audioName.textContent = 'не обрано';
+    statusEl.textContent = 'Не вдалося завантажити цей аудіофайл. Спробуй MP3 або WAV.';
   });
 }
 

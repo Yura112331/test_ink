@@ -34,6 +34,7 @@
   .rack{ background:linear-gradient(180deg,var(--panel),var(--panel-2)); border:1px solid var(--line); border-radius:14px; padding:22px; box-shadow:0 20px 50px -20px rgba(0,0,0,.6); }
 
   .drop{ border:1.5px dashed var(--line); border-radius:10px; padding:34px 18px; text-align:center; cursor:pointer; transition:border-color .15s, background .15s; }
+  .drop.busy{ opacity:.55; pointer-events:none; }
   .drop:hover, .drop.drag{ border-color:var(--gold); background:rgba(191,95,255,0.08); }
   .drop .slot{ font-family:var(--font-mono); font-size:12px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px; }
   .drop .cta{ font-family:var(--font-display); font-weight:700; font-size:17px; }
@@ -76,6 +77,15 @@
   .status{ font-family:var(--font-mono); font-size:12px; color:var(--muted); margin-top:10px; min-height:16px; }
   .status.ok{ color:var(--teal); }
   .status.err{ color:var(--danger); }
+  .status.busy{ color:var(--gold); }
+
+  .progress{ display:none; margin-top:16px; padding:16px; background:var(--bg); border:1px solid var(--line); border-radius:10px; align-items:center; gap:14px; }
+  .progress.show{ display:flex; }
+  .spinner{ width:22px; height:22px; border-radius:50%; border:3px solid var(--line); border-top-color:var(--gold); flex:none; animation:spin .8s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .progress .ptext{ flex:none; font-family:var(--font-mono); font-size:12px; color:var(--muted); min-width:150px; }
+  .progbar{ flex:1; height:8px; background:var(--panel-2); border-radius:4px; overflow:hidden; }
+  .progbar i{ display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--teal),var(--gold)); transition:width .15s linear; }
 
   .toolnav{ margin-top:16px; text-align:center; }
   .toolnav a{ color:var(--muted); font-size:12px; text-decoration:none; border-bottom:1px dotted var(--muted); }
@@ -169,6 +179,14 @@
 
     <canvas id="wave" width="800" height="80" style="display:none"></canvas>
 
+    <div class="status" id="status"></div>
+
+    <div class="progress" id="progressBlock">
+      <div class="spinner"></div>
+      <div class="ptext" id="progText">Завантаження… 0%</div>
+      <div class="progbar"><i id="progFill"></i></div>
+    </div>
+
     <div class="panel" id="panel">
       <div class="strip">
         <div class="fader">
@@ -202,8 +220,6 @@
         <button class="btn ghost" id="stopBtn">■ Стоп</button>
         <button class="btn primary" id="exportBtn">Завантажити готовий трек</button>
       </div>
-
-      <div class="status" id="status"></div>
     </div>
 
     <div class="toolnav">Потрібно прибрати або виділити вокал? → <a href="vocal-split.html">Окремий інструмент VOCAL SPLIT</a></div>
@@ -267,6 +283,9 @@
   const waveCanvas = document.getElementById('wave');
   const panel = document.getElementById('panel');
   const statusEl = document.getElementById('status');
+  const progressBlock = document.getElementById('progressBlock');
+  const progFill = document.getElementById('progFill');
+  const progText = document.getElementById('progText');
 
   const loud = document.getElementById('loud'), vLoud = document.getElementById('vLoud');
   const comp = document.getElementById('comp'), vComp = document.getElementById('vComp');
@@ -291,6 +310,26 @@
   function setStatus(msg, cls){
     statusEl.textContent = msg || '';
     statusEl.className = 'status' + (cls ? ' ' + cls : '');
+  }
+
+  function showProgress(pct, label){
+    progressBlock.classList.add('show');
+    progFill.style.width = Math.round(pct*100) + '%';
+    progText.textContent = `${label} ${Math.round(pct*100)}%`;
+  }
+  function hideProgress(){
+    progressBlock.classList.remove('show');
+    progFill.style.width = '0%';
+  }
+
+  function withTimeout(promise, ms, message){
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error(message || 'Час очікування вичерпано')), ms);
+      promise.then(
+        (v) => { clearTimeout(timer); resolve(v); },
+        (e) => { clearTimeout(timer); reject(e); }
+      );
+    });
   }
 
   function dbToGain(db){ return Math.pow(10, db/20); }
@@ -322,7 +361,22 @@
   }
 
   async function loadFile(file){
-    setStatus('Декодування аудіо…');
+    if(dropEl.classList.contains('busy')) return;
+    dropEl.classList.add('busy');
+    fileInput.disabled = true;
+    hideProgress();
+    setStatus('');
+    showProgress(0.02, 'Читання файлу…');
+
+    const estimatedMs = Math.max(500, Math.min(6000, file.size / 4000));
+    const startedAt = Date.now();
+    let stageDone = false;
+    const progressTimer = setInterval(() => {
+      if(stageDone) return;
+      const pct = Math.min(0.92, (Date.now()-startedAt)/estimatedMs);
+      showProgress(pct, 'Декодування аудіо…');
+    }, 120);
+
     try{
       if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') await audioCtx.resume();
@@ -330,7 +384,15 @@
       if (!arrayBuf || arrayBuf.byteLength === 0){
         throw new Error('Файл порожній або не вдалося його прочитати.');
       }
-      const buf = await decode(audioCtx, arrayBuf.slice(0));
+      const buf = await withTimeout(
+        decode(audioCtx, arrayBuf.slice(0)),
+        30000,
+        'Декодування зайняло надто багато часу. Спробуйте інший файл або браузер.'
+      );
+      stageDone = true;
+      clearInterval(progressTimer);
+      showProgress(1, 'Готово');
+
       originalBuffer = buf;
       fileNameBase = file.name.replace(/\.[^/.]+$/, '');
       trackName.innerHTML = `<b>${file.name}</b> · ${buf.numberOfChannels}ch · ${buf.sampleRate}Hz · ${buf.duration.toFixed(1)}s`;
@@ -340,9 +402,15 @@
       panel.classList.add('show');
       setStatus('Готово. Налаштуйте параметри й натисніть «Авто-мастеринг» або одразу завантажте.', 'ok');
     }catch(err){
+      stageDone = true;
+      clearInterval(progressTimer);
       console.error(err);
       const reason = (err && (err.message || err.name)) ? (err.message || err.name) : 'невідома помилка';
       setStatus(`Не вдалося прочитати цей файл (${reason}). Спробуйте інший MP3/WAV-файл або інший браузер.`, 'err');
+    } finally {
+      setTimeout(hideProgress, 400);
+      dropEl.classList.remove('busy');
+      fileInput.disabled = false;
     }
   }
 

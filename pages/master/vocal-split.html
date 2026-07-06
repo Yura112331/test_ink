@@ -383,7 +383,11 @@
     setProgress(0, 'Перерахунок мінусу…');
     setStatus('Перераховую мінус із новою інтенсивністю…', 'busy');
     try{
-      instrBuffer = await buildVariantWithProgress(originalBuffer, 'instrumental', p => setProgress(p, 'Перерахунок мінусу…'), { intensity: instrIntensity });
+      instrBuffer = await withTimeout(
+        buildVariantWithProgress(originalBuffer, 'instrumental', p => setProgress(p, 'Перерахунок мінусу…'), { intensity: instrIntensity }),
+        90000,
+        'Обробка зайняла надто багато часу. Спробуйте інший браузер (Chrome) або коротший файл.'
+      );
       showProgress(false);
       setStatus('Мінус перераховано з новою інтенсивністю.', 'ok');
     }catch(err){
@@ -482,9 +486,17 @@
 
       setProgress(0, 'Розрахунок мінусу…');
       setStatus('Обробка триває…', 'busy');
-      instrBuffer = await buildVariantWithProgress(buf, 'instrumental', p => setProgress(p*0.5, 'Розрахунок мінусу…'), { intensity: instrIntensity });
+      instrBuffer = await withTimeout(
+        buildVariantWithProgress(buf, 'instrumental', p => setProgress(p*0.5, 'Розрахунок мінусу…'), { intensity: instrIntensity }),
+        90000,
+        'Обробка зайняла надто багато часу. Спробуйте інший браузер (Chrome) або коротший файл.'
+      );
       setProgress(0.5, 'Розрахунок вокалу…');
-      vocalBuffer = await buildVariantWithProgress(buf, 'vocal', p => setProgress(0.5 + p*0.5, 'Розрахунок вокалу…'));
+      vocalBuffer = await withTimeout(
+        buildVariantWithProgress(buf, 'vocal', p => setProgress(0.5 + p*0.5, 'Розрахунок вокалу…')),
+        90000,
+        'Обробка зайняла надто багато часу. Спробуйте інший браузер (Chrome) або коротший файл.'
+      );
       setProgress(1, 'Готово');
       showProgress(false);
 
@@ -595,19 +607,23 @@
     merger.connect(offline.destination);
 
     const duration = buffer.length / buffer.sampleRate;
-    const steps = 20;
-    if (typeof offline.suspend === 'function' && duration > 1){
-      for (let i=1;i<steps;i++){
-        const t = duration * i / steps;
-        offline.suspend(t).then(() => {
-          onProgress(i/steps);
-          offline.resume();
-        }).catch(()=>{});
-      }
-    }
+    const estimatedMs = Math.max(400, Math.min(20000, duration * 260));
+    const startedAt = Date.now();
+    let finishedRendering = false;
+    const progressTimer = setInterval(() => {
+      if (finishedRendering) return;
+      const pct = Math.min(0.95, (Date.now() - startedAt) / estimatedMs);
+      onProgress(pct);
+    }, 120);
 
     src.start();
-    const rendered = await offline.startRendering();
+    let rendered;
+    try{
+      rendered = await offline.startRendering();
+    } finally {
+      finishedRendering = true;
+      clearInterval(progressTimer);
+    }
     onProgress(1);
     return rendered;
   }

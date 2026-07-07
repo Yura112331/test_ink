@@ -169,7 +169,7 @@
       <div class="slot">// audio in</div>
       <div class="cta" data-i18n-local="dropCta">Перетягніть трек сюди або натисніть, щоб обрати файл</div>
       <div class="sub" data-i18n-local="dropSub">MP3, WAV, M4A, OGG — обробка повністю локальна, файл нікуди не надсилається</div>
-      <input type="file" id="file" accept="audio/*" />
+      <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm" />
     </div>
 
     <div class="track-info" id="trackInfo">
@@ -292,6 +292,7 @@
       footNote: 'Обробка звуку виконується Web Audio API безпосередньо у вашому браузері. Файли не зберігаються і не передаються нікуди.',
       dbUnit: ' дБ',
       readingFile: 'Читання файлу…', decodingAudio: 'Декодування аудіо…', done: 'Готово',
+      decodingAudioSlow: 'Декодування аудіо… (у Safari це може тривати до хвилини, будь ласка, зачекай)',
       statusReady: 'Готово. Налаштуйте параметри й натисніть «Авто-мастеринг» або одразу завантажте.',
       statusReadError: (reason) => `Не вдалося прочитати цей файл (${reason}). Спробуйте інший MP3/WAV-файл або інший браузер.`,
       decodeTimeout: 'Декодування зайняло надто багато часу. Спробуйте інший файл або браузер.',
@@ -316,6 +317,7 @@
       footNote: 'Audio processing runs via the Web Audio API directly in your browser. Files are never stored or sent anywhere.',
       dbUnit: ' dB',
       readingFile: 'Reading file…', decodingAudio: 'Decoding audio…', done: 'Done',
+      decodingAudioSlow: 'Decoding audio… (in Safari this can take up to a minute, please wait)',
       statusReady: 'Ready. Adjust the sliders and hit "Auto-master", or download right away.',
       statusReadError: (reason) => `Couldn't read this file (${reason}). Try another MP3/WAV file or a different browser.`,
       decodeTimeout: 'Decoding took too long. Try another file or browser.',
@@ -374,6 +376,20 @@
     statusEl.textContent = msg || '';
     statusEl.className = 'status' + (cls ? ' ' + cls : '');
   }
+
+  window.addEventListener('error', (e) => {
+    hideProgress();
+    dropEl.classList.remove('busy');
+    fileInput.disabled = false;
+    setStatus('Сталася неочікувана помилка: ' + (e.message || 'невідома') + '. Спробуй перезавантажити сторінку або інший браузер.', 'err');
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    hideProgress();
+    dropEl.classList.remove('busy');
+    fileInput.disabled = false;
+    const reason = (e.reason && (e.reason.message || e.reason)) || 'невідома помилка';
+    setStatus('Сталася неочікувана помилка: ' + reason + '. Спробуй перезавантажити сторінку або інший браузер.', 'err');
+  });
 
   function showProgress(pct, label){
     progressBlock.classList.add('show');
@@ -436,8 +452,9 @@
     let stageDone = false;
     const progressTimer = setInterval(() => {
       if(stageDone) return;
-      const pct = Math.min(0.92, (Date.now()-startedAt)/estimatedMs);
-      showProgress(pct, mt('decodingAudio'));
+      const elapsed = Date.now() - startedAt;
+      const pct = Math.min(0.92, elapsed/estimatedMs);
+      showProgress(pct, elapsed > 6000 ? mt('decodingAudioSlow') : mt('decodingAudio'));
     }, 120);
 
     try{
@@ -449,7 +466,7 @@
       }
       const buf = await withTimeout(
         decode(audioCtx, arrayBuf.slice(0)),
-        Math.max(30000, Math.min(120000, file.size / 15000)),
+        Math.max(60000, Math.min(180000, file.size / 3000)),
         mt('decodeTimeout')
       );
       stageDone = true;

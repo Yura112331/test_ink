@@ -189,7 +189,7 @@
       <div class="slot">// audio in</div>
       <div class="cta" data-i18n-local="dropCta">Перетягніть трек сюди або натисніть, щоб обрати файл</div>
       <div class="sub" data-i18n-local="dropSub">MP3, WAV, M4A, OGG — потрібен стерео-файл, обробка повністю локальна</div>
-      <input type="file" id="file" accept="audio/*" />
+      <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm" />
     </div>
 
     <div class="track-info" id="trackInfo">
@@ -458,6 +458,20 @@
     statusEl.className = 'status' + (cls ? ' ' + cls : '');
   }
 
+  window.addEventListener('error', (e) => {
+    showProgress(false);
+    dropEl.classList.remove('busy');
+    fileInput.disabled = false;
+    setStatus('Сталася неочікувана помилка: ' + (e.message || 'невідома') + '. Спробуй перезавантажити сторінку або інший браузер.', 'err');
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    showProgress(false);
+    dropEl.classList.remove('busy');
+    fileInput.disabled = false;
+    const reason = (e.reason && (e.reason.message || e.reason)) || 'невідома помилка';
+    setStatus('Сталася неочікувана помилка: ' + reason + '. Спробуй перезавантажити сторінку або інший браузер.', 'err');
+  });
+
   function setBusy(busy){
     [playInstrBtn, playVocalBtn, playMergedBtn, dlInstrBtn, dlVocalBtn, dlMergedBtn, playOrigBtn, cutBtn, undoCutBtn, resetCutsBtn].forEach(b => b.disabled = busy);
   }
@@ -564,7 +578,7 @@
       if (audioCtx.state === 'suspended') await audioCtx.resume();
       const arrayBuf = await withTimeout(
         readFileWithSimulatedProgress(file, p => setProgress(p, vt('readingFile')(sizeMb))),
-        30000,
+        60000,
         'Читання файлу зайняло надто багато часу. Спробуйте закрити інші вкладки, перезавантажити сторінку або обрати інший файл.'
       );
       if (!arrayBuf || arrayBuf.byteLength === 0) throw new Error('Файл порожній або не вдалося його прочитати.');
@@ -572,7 +586,7 @@
       setStatus(vt('decodingStatusBusy'), 'busy');
       const buf = await withTimeout(
         decode(audioCtx, arrayBuf),
-        60000,
+        120000,
         'Декодування зайняло надто багато часу. Спробуйте інший файл або інший браузер (Chrome зазвичай надійніший за Safari для MP3).'
       );
       originalBuffer = buf;

@@ -293,6 +293,8 @@
       dbUnit: ' дБ',
       readingFile: 'Читання файлу…', decodingAudio: 'Декодування аудіо…', done: 'Готово',
       decodingAudioSlow: 'Декодування аудіо… (у Safari це може тривати до хвилини, будь ласка, зачекай)',
+      renderingLabel: 'Обробка треку…', renderingSlow: 'Обробка треку… (для довгих треків це може тривати довше, зачекай)',
+      renderTimeout: 'Обробка зайняла надто багато часу. Спробуй коротший трек або інший браузер.',
       statusReady: 'Готово. Налаштуйте параметри й натисніть «Авто-мастеринг» або одразу завантажте.',
       statusReadError: (reason) => `Не вдалося прочитати цей файл (${reason}). Спробуйте інший MP3/WAV-файл або інший браузер.`,
       decodeTimeout: 'Декодування зайняло надто багато часу. Спробуйте інший файл або браузер.',
@@ -318,6 +320,8 @@
       dbUnit: ' dB',
       readingFile: 'Reading file…', decodingAudio: 'Decoding audio…', done: 'Done',
       decodingAudioSlow: 'Decoding audio… (in Safari this can take up to a minute, please wait)',
+      renderingLabel: 'Processing the track…', renderingSlow: 'Processing the track… (long tracks can take longer, please wait)',
+      renderTimeout: 'Processing took too long. Try a shorter track or a different browser.',
       statusReady: 'Ready. Adjust the sliders and hit "Auto-master", or download right away.',
       statusReadError: (reason) => `Couldn't read this file (${reason}). Try another MP3/WAV file or a different browser.`,
       decodeTimeout: 'Decoding took too long. Try another file or browser.',
@@ -622,7 +626,31 @@
     const endNode = buildChain(offline, src);
     endNode.connect(offline.destination);
     src.start();
-    const rendered = await offline.startRendering();
+
+    const durationSec = originalBuffer.length / originalBuffer.sampleRate;
+    const estimatedMs = Math.max(600, Math.min(15000, durationSec * 700));
+    const startedAt = Date.now();
+    let renderDone = false;
+    showProgress(0.02, mt('renderingLabel'));
+    const progressTimer = setInterval(() => {
+      if(renderDone) return;
+      const elapsed = Date.now() - startedAt;
+      const pct = Math.min(0.95, elapsed/estimatedMs);
+      showProgress(pct, elapsed > 6000 ? mt('renderingSlow') : mt('renderingLabel'));
+    }, 120);
+
+    let rendered;
+    try{
+      rendered = await withTimeout(
+        offline.startRendering(),
+        Math.max(45000, Math.min(180000, durationSec * 3000)),
+        mt('renderTimeout')
+      );
+    } finally {
+      renderDone = true;
+      clearInterval(progressTimer);
+    }
+    showProgress(1, mt('done'));
 
     let peak = 0;
     for (let ch=0; ch<rendered.numberOfChannels; ch++){
@@ -694,9 +722,11 @@
       setStatus(mt('statusExportDone'), 'ok');
     }catch(err){
       console.error(err);
-      setStatus(mt('statusExportError'), 'err');
+      const reason = (err && err.message) ? err.message : mt('statusExportError');
+      setStatus(reason, 'err');
     }finally{
       exportBtn.disabled = false;
+      setTimeout(hideProgress, 400);
     }
   });
 

@@ -154,9 +154,9 @@
   <div class="page-header-orb" style="top:20%;right:20%;width:500px;height:500px;background:radial-gradient(circle,#00BFFF,transparent 70%)"></div>
   <div class="container">
     <div class="reveal">
-      <div class="page-label" style="color:var(--blue)">— <a href="index.html" style="color:inherit;text-decoration:none">Аудіо-студія</a> / Мастеринг</div>
+      <div class="page-label" style="color:var(--blue)">— <a href="index.html" style="color:inherit;text-decoration:none" data-i18n-local="audioStudioLink">Аудіо-студія</a> <span data-i18n-local="masteringLabel">/ Мастеринг</span></div>
       <h1 class="page-title" style="font-size:clamp(2.2rem,6vw,4rem)">MASTER<span class="gradient-text">.WAV</span></h1>
-      <p class="page-sub">Мастеринг треків прямо в браузері — гучність, компресія, баланс частот. Нічого не завантажується на сервер, усе відбувається на вашому пристрої.</p>
+      <p class="page-sub" data-i18n-local="pageSub">Мастеринг треків прямо в браузері — гучність, компресія, баланс частот. Нічого не завантажується на сервер, усе відбувається на вашому пристрої.</p>
     </div>
   </div>
 </section>
@@ -167,14 +167,14 @@
 
     <div class="drop" id="drop">
       <div class="slot">// audio in</div>
-      <div class="cta">Перетягніть трек сюди або натисніть, щоб обрати файл</div>
-      <div class="sub">MP3, WAV, M4A, OGG — обробка повністю локальна, файл нікуди не надсилається</div>
-      <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm" />
+      <div class="cta" data-i18n-local="dropCta">Перетягніть трек сюди або натисніть, щоб обрати файл</div>
+      <div class="sub" data-i18n-local="dropSub">MP3, WAV, M4A, OGG — обробка повністю локальна, файл нікуди не надсилається</div>
+      <input type="file" id="file" accept="audio/*" />
     </div>
 
     <div class="track-info" id="trackInfo">
       <span id="trackName">—</span>
-      <button id="clearBtn">Обрати інший файл</button>
+      <button id="clearBtn" data-i18n-local="clearBtn">Обрати інший файл</button>
     </div>
 
     <canvas id="wave" width="800" height="80" style="display:none"></canvas>
@@ -190,45 +190,45 @@
     <div class="panel" id="panel">
       <div class="strip">
         <div class="fader">
-          <div class="flabel">Гучність <span class="fval" id="vLoud">+6 дБ</span></div>
+          <div class="flabel"><span data-i18n-local="loudLabel">Гучність</span> <span class="fval" id="vLoud">+6 дБ</span></div>
           <input type="range" id="loud" min="-3" max="12" step="0.5" value="6" />
         </div>
         <div class="fader">
-          <div class="flabel">Компресія <span class="fval" id="vComp">40%</span></div>
+          <div class="flabel"><span data-i18n-local="compLabel">Компресія</span> <span class="fval" id="vComp">40%</span></div>
           <input type="range" id="comp" min="0" max="100" step="5" value="40" />
         </div>
         <div class="fader">
-          <div class="flabel">Бас <span class="fval" id="vBass">+2 дБ</span></div>
+          <div class="flabel"><span data-i18n-local="bassLabel">Бас</span> <span class="fval" id="vBass">+2 дБ</span></div>
           <input type="range" id="bass" min="-6" max="6" step="0.5" value="2" />
         </div>
         <div class="fader">
-          <div class="flabel">Верхи <span class="fval" id="vTreb">+2 дБ</span></div>
+          <div class="flabel"><span data-i18n-local="trebLabel">Верхи</span> <span class="fval" id="vTreb">+2 дБ</span></div>
           <input type="range" id="treb" min="-6" max="6" step="0.5" value="2" />
         </div>
       </div>
 
       <div class="meter-block">
-        <div class="meter-num" id="meterLabel">РІВЕНЬ</div>
+        <div class="meter-num" id="meterLabel" data-i18n-local="meterLabel">РІВЕНЬ</div>
         <div class="vu"><div class="fill" id="vuFill"></div></div>
         <div class="meter-num" id="peakVal">-∞ дБ</div>
       </div>
 
       <div class="row">
-        <button class="btn auto" id="autoBtn">Авто-мастеринг</button>
-        <button class="btn" id="playOrig">▶ Оригінал</button>
-        <button class="btn" id="playMast">▶ Опрацьовано</button>
-        <button class="btn ghost" id="stopBtn">■ Стоп</button>
-        <button class="btn primary" id="exportBtn">Завантажити готовий трек</button>
+        <button class="btn auto" id="autoBtn" data-i18n-local="autoBtn">Авто-мастеринг</button>
+        <button class="btn" id="playOrig" data-i18n-local="playOrig">▶ Оригінал</button>
+        <button class="btn" id="playMast" data-i18n-local="playMast">▶ Опрацьовано</button>
+        <button class="btn ghost" id="stopBtn" data-i18n-local="stopBtn">■ Стоп</button>
+        <button class="btn primary" id="exportBtn" data-i18n-local="exportBtn">Завантажити готовий трек</button>
       </div>
     </div>
 
-    <div class="toolnav">Потрібно прибрати або виділити вокал? → <a href="vocal-split.html">Окремий інструмент VOCAL SPLIT</a></div>
-    <div class="toolnav">Потрібно зробити візуалізацію пісні для відео? → <a href="equalizer-studio.html">Окремий інструмент EQUALIZER</a></div>
-    <div class="toolnav">← <a href="index.html">Усі аудіо-інструменти</a></div>
+    <div class="toolnav"><span data-i18n-local="toolnavVocal">Потрібно прибрати або виділити вокал? →</span> <a href="vocal-split.html" data-i18n-local="toolnavVocalLink">Окремий інструмент VOCAL SPLIT</a></div>
+    <div class="toolnav"><span data-i18n-local="toolnavEq">Потрібно зробити візуалізацію пісні для відео? →</span> <a href="equalizer-studio.html" data-i18n-local="toolnavEqLink">Окремий інструмент EQUALIZER</a></div>
+    <div class="toolnav">← <a href="index.html" data-i18n-local="toolnavAllLink">Усі аудіо-інструменти</a></div>
 
   </div>
 
-  <p style="text-align:center;color:rgba(255,255,255,.3);font-size:12px;margin-top:26px">Обробка звуку виконується Web Audio API безпосередньо у вашому браузері. Файли не зберігаються і не передаються нікуди.</p>
+  <p style="text-align:center;color:rgba(255,255,255,.3);font-size:12px;margin-top:26px" data-i18n-local="footNote">Обробка звуку виконується Web Audio API безпосередньо у вашому браузері. Файли не зберігаються і не передаються нікуди.</p>
 </div>
 
 <footer>
@@ -275,6 +275,69 @@
 
 <script>
 (() => {
+  const ML = {
+    uk: {
+      audioStudioLink: 'Аудіо-студія', masteringLabel: '/ Мастеринг',
+      pageSub: 'Мастеринг треків прямо в браузері — гучність, компресія, баланс частот. Нічого не завантажується на сервер, усе відбувається на вашому пристрої.',
+      dropCta: 'Перетягніть трек сюди або натисніть, щоб обрати файл',
+      dropSub: 'MP3, WAV, M4A, OGG — обробка повністю локальна, файл нікуди не надсилається',
+      clearBtn: 'Обрати інший файл',
+      loudLabel: 'Гучність', compLabel: 'Компресія', bassLabel: 'Бас', trebLabel: 'Верхи',
+      meterLabel: 'РІВЕНЬ',
+      autoBtn: 'Авто-мастеринг', playOrig: '▶ Оригінал', playMast: '▶ Опрацьовано',
+      stopBtn: '■ Стоп', exportBtn: 'Завантажити готовий трек',
+      toolnavVocal: 'Потрібно прибрати або виділити вокал? →', toolnavVocalLink: 'Окремий інструмент VOCAL SPLIT',
+      toolnavEq: 'Потрібно зробити візуалізацію пісні для відео? →', toolnavEqLink: 'Окремий інструмент EQUALIZER',
+      toolnavAllLink: 'Усі аудіо-інструменти',
+      footNote: 'Обробка звуку виконується Web Audio API безпосередньо у вашому браузері. Файли не зберігаються і не передаються нікуди.',
+      dbUnit: ' дБ',
+      readingFile: 'Читання файлу…', decodingAudio: 'Декодування аудіо…', done: 'Готово',
+      statusReady: 'Готово. Налаштуйте параметри й натисніть «Авто-мастеринг» або одразу завантажте.',
+      statusReadError: (reason) => `Не вдалося прочитати цей файл (${reason}). Спробуйте інший MP3/WAV-файл або інший браузер.`,
+      decodeTimeout: 'Декодування зайняло надто багато часу. Спробуйте інший файл або браузер.',
+      statusAutoApplied: 'Застосовано пресет «Авто-мастеринг». Можете підлаштувати повзунки або одразу завантажити.',
+      statusProcessing: 'Обробка треку… (рендеринг відбувається локально, це може зайняти кілька секунд)',
+      statusExportDone: 'Готово! Файл завантажено на ваш пристрій — нічого не збережено ніде більше.',
+      statusExportError: 'Помилка обробки. Спробуйте ще раз або інший файл.'
+    },
+    en: {
+      audioStudioLink: 'Audio Studio', masteringLabel: '/ Mastering',
+      pageSub: 'Master your tracks right in the browser — loudness, compression, frequency balance. Nothing is uploaded to a server, everything happens on your device.',
+      dropCta: 'Drag a track here or tap to choose a file',
+      dropSub: 'MP3, WAV, M4A, OGG — fully local processing, the file is never sent anywhere',
+      clearBtn: 'Choose another file',
+      loudLabel: 'Loudness', compLabel: 'Compression', bassLabel: 'Bass', trebLabel: 'Treble',
+      meterLabel: 'LEVEL',
+      autoBtn: 'Auto-master', playOrig: '▶ Original', playMast: '▶ Processed',
+      stopBtn: '■ Stop', exportBtn: 'Download finished track',
+      toolnavVocal: 'Need to remove or isolate vocals? →', toolnavVocalLink: 'Separate tool: VOCAL SPLIT',
+      toolnavEq: 'Need a visualizer for a video? →', toolnavEqLink: 'Separate tool: EQUALIZER',
+      toolnavAllLink: 'All audio tools',
+      footNote: 'Audio processing runs via the Web Audio API directly in your browser. Files are never stored or sent anywhere.',
+      dbUnit: ' dB',
+      readingFile: 'Reading file…', decodingAudio: 'Decoding audio…', done: 'Done',
+      statusReady: 'Ready. Adjust the sliders and hit "Auto-master", or download right away.',
+      statusReadError: (reason) => `Couldn't read this file (${reason}). Try another MP3/WAV file or a different browser.`,
+      decodeTimeout: 'Decoding took too long. Try another file or browser.',
+      statusAutoApplied: 'Applied the "Auto-master" preset. You can fine-tune the sliders or download right away.',
+      statusProcessing: 'Processing the track… (rendering happens locally, this can take a few seconds)',
+      statusExportDone: "Done! The file was downloaded to your device — nothing was saved anywhere else.",
+      statusExportError: 'Processing error. Try again or use a different file.'
+    }
+  };
+  let mLang = localStorage.getItem('lang') || 'uk';
+  function mt(key){ return ML[mLang][key]; }
+  function applyLocalI18n(){
+    mLang = localStorage.getItem('lang') || 'uk';
+    document.querySelectorAll('[data-i18n-local]').forEach(el => {
+      const k = el.getAttribute('data-i18n-local');
+      if(ML[mLang][k] !== undefined) el.textContent = ML[mLang][k];
+    });
+    refreshLabels();
+    peakVal.textContent = (peakVal.textContent.replace(/[^\-∞0-9.]/g,'') || '-∞') + mt('dbUnit');
+  }
+  window.onLangChange = function(){ applyLocalI18n(); };
+
   const dropEl = document.getElementById('drop');
   const fileInput = document.getElementById('file');
   const trackInfo = document.getElementById('trackInfo');
@@ -366,7 +429,7 @@
     fileInput.disabled = true;
     hideProgress();
     setStatus('');
-    showProgress(0.02, 'Читання файлу…');
+    showProgress(0.02, mt('readingFile'));
 
     const estimatedMs = Math.max(500, Math.min(6000, file.size / 4000));
     const startedAt = Date.now();
@@ -374,7 +437,7 @@
     const progressTimer = setInterval(() => {
       if(stageDone) return;
       const pct = Math.min(0.92, (Date.now()-startedAt)/estimatedMs);
-      showProgress(pct, 'Декодування аудіо…');
+      showProgress(pct, mt('decodingAudio'));
     }, 120);
 
     try{
@@ -386,12 +449,12 @@
       }
       const buf = await withTimeout(
         decode(audioCtx, arrayBuf.slice(0)),
-        30000,
-        'Декодування зайняло надто багато часу. Спробуйте інший файл або браузер.'
+        Math.max(30000, Math.min(120000, file.size / 15000)),
+        mt('decodeTimeout')
       );
       stageDone = true;
       clearInterval(progressTimer);
-      showProgress(1, 'Готово');
+      showProgress(1, mt('done'));
 
       originalBuffer = buf;
       fileNameBase = file.name.replace(/\.[^/.]+$/, '');
@@ -400,13 +463,13 @@
       waveCanvas.style.display = 'block';
       drawWaveform(buf);
       panel.classList.add('show');
-      setStatus('Готово. Налаштуйте параметри й натисніть «Авто-мастеринг» або одразу завантажте.', 'ok');
+      setStatus(mt('statusReady'), 'ok');
     }catch(err){
       stageDone = true;
       clearInterval(progressTimer);
       console.error(err);
       const reason = (err && (err.message || err.name)) ? (err.message || err.name) : 'невідома помилка';
-      setStatus(`Не вдалося прочитати цей файл (${reason}). Спробуйте інший MP3/WAV-файл або інший браузер.`, 'err');
+      setStatus(mt('statusReadError')(reason), 'err');
     } finally {
       setTimeout(hideProgress, 400);
       dropEl.classList.remove('busy');
@@ -435,10 +498,11 @@
   }
 
   function refreshLabels(){
-    vLoud.textContent = (loud.value>=0?'+':'') + loud.value + ' дБ';
+    const db = mt('dbUnit');
+    vLoud.textContent = (loud.value>=0?'+':'') + loud.value + db;
     vComp.textContent = comp.value + '%';
-    vBass.textContent = (bass.value>=0?'+':'') + bass.value + ' дБ';
-    vTreb.textContent = (treb.value>=0?'+':'') + treb.value + ' дБ';
+    vBass.textContent = (bass.value>=0?'+':'') + bass.value + db;
+    vTreb.textContent = (treb.value>=0?'+':'') + treb.value + db;
   }
   [loud,comp,bass,treb].forEach(el => el.addEventListener('input', refreshLabels));
   refreshLabels();
@@ -446,7 +510,7 @@
   autoBtn.addEventListener('click', () => {
     loud.value = 7; comp.value = 45; bass.value = 2.5; treb.value = 2.5;
     refreshLabels();
-    setStatus('Застосовано пресет «Авто-мастеринг». Можете підлаштувати повзунки або одразу завантажити.', 'ok');
+    setStatus(mt('statusAutoApplied'), 'ok');
   });
 
   function buildChain(ctx, source){
@@ -483,7 +547,7 @@
     if (currentSource){ try{ currentSource.stop(); }catch(e){} currentSource=null; }
     if (rafId) cancelAnimationFrame(rafId);
     vuFill.style.width = '0%';
-    peakVal.textContent = '-∞ дБ';
+    peakVal.textContent = '-∞' + mt('dbUnit');
   }
 
   function playBuffer(processed){
@@ -523,7 +587,7 @@
       const db = peak>0 ? 20*Math.log10(peak) : -60;
       const pct = Math.max(0, Math.min(100, (db+60)/60*100));
       vuFill.style.width = pct + '%';
-      peakVal.textContent = (db<=-59 ? '-∞' : db.toFixed(1)) + ' дБ';
+      peakVal.textContent = (db<=-59 ? '-∞' : db.toFixed(1)) + mt('dbUnit');
       rafId = requestAnimationFrame(tick);
     }
     tick();
@@ -598,7 +662,7 @@
   exportBtn.addEventListener('click', async () => {
     if (!originalBuffer) return;
     exportBtn.disabled = true;
-    setStatus('Обробка треку… (рендеринг відбувається локально, це може зайняти кілька секунд)');
+    setStatus(mt('statusProcessing'));
     try{
       const { buffer, scale } = await renderMastered();
       const blob = encodeWav(buffer, scale);
@@ -610,14 +674,16 @@
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 4000);
-      setStatus('Готово! Файл завантажено на ваш пристрій — нічого не збережено ніде більше.', 'ok');
+      setStatus(mt('statusExportDone'), 'ok');
     }catch(err){
       console.error(err);
-      setStatus('Помилка обробки. Спробуйте ще раз або інший файл.', 'err');
+      setStatus(mt('statusExportError'), 'err');
     }finally{
       exportBtn.disabled = false;
     }
   });
+
+  applyLocalI18n();
 })();
 </script>
 </body>

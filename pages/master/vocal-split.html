@@ -174,9 +174,9 @@
   <div class="page-header-orb" style="top:20%;left:15%;width:500px;height:500px;background:radial-gradient(circle,#BF5FFF,transparent 70%)"></div>
   <div class="container">
     <div class="reveal">
-      <div class="page-label" style="color:var(--purple)">— <a href="index.html" style="color:inherit;text-decoration:none">Аудіо-студія</a> / Vocal Split</div>
+      <div class="page-label" style="color:var(--purple)">— <a href="index.html" style="color:inherit;text-decoration:none" data-i18n-local="audioStudioLink">Аудіо-студія</a> / Vocal Split</div>
       <h1 class="page-title" style="font-size:clamp(2.2rem,6vw,4rem)">VOCAL<span class="gradient-text">SPLIT</span></h1>
-      <p class="page-sub">Розділення, вирізання та повторне зведення вокалу — усе прямо у браузері, нічого не завантажується на сервер.</p>
+      <p class="page-sub" data-i18n-local="pageSub">Розділення, вирізання та повторне зведення вокалу — усе прямо у браузері, нічого не завантажується на сервер.</p>
     </div>
   </div>
 </section>
@@ -187,14 +187,14 @@
 
     <div class="drop" id="drop">
       <div class="slot">// audio in</div>
-      <div class="cta">Перетягніть трек сюди або натисніть, щоб обрати файл</div>
-      <div class="sub">MP3, WAV, M4A, OGG — потрібен стерео-файл, обробка повністю локальна</div>
-      <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm" />
+      <div class="cta" data-i18n-local="dropCta">Перетягніть трек сюди або натисніть, щоб обрати файл</div>
+      <div class="sub" data-i18n-local="dropSub">MP3, WAV, M4A, OGG — потрібен стерео-файл, обробка повністю локальна</div>
+      <input type="file" id="file" accept="audio/*" />
     </div>
 
     <div class="track-info" id="trackInfo">
       <span id="trackName">—</span>
-      <button id="clearBtn">Обрати інший файл</button>
+      <button id="clearBtn" data-i18n-local="clearBtn">Обрати інший файл</button>
     </div>
 
     <canvas id="wave" width="800" height="80" style="display:none"></canvas>
@@ -209,65 +209,65 @@
 
     <div class="panel" id="panel">
       <div class="notebox">
-        <b>Як це працює:</b> розділення виконується через скасування фази центрального каналу в частотній смузі вокалу (бас і верхні частоти залишаються майже незмінними, щоб не втрачати «м'ясо» мікса) — це не повноцінний ШІ-сепаратор доріжок. Якість сильно залежить від конкретного треку: краще спрацьовує там, де вокал сухий і зведений рівно по центру; гірше — там, де є ревер, подвоєння вокалу чи стерео-розширення (тоді прибрати голос повністю фізично неможливо цим методом). Спробуйте підкрутити інтенсивність нижче — для різних пісень оптимальне значення відрізняється. На моно-файлах розділення недоступне.
+        <b data-i18n-local="noteboxBold">Як це працює:</b> <span data-i18n-local="noteboxText">розділення виконується через скасування фази центрального каналу в частотній смузі вокалу (бас і верхні частоти залишаються майже незмінними, щоб не втрачати «м'ясо» мікса) — це не повноцінний ШІ-сепаратор доріжок. Якість сильно залежить від конкретного треку: краще спрацьовує там, де вокал сухий і зведений рівно по центру; гірше — там, де є ревер, подвоєння вокалу чи стерео-розширення (тоді прибрати голос повністю фізично неможливо цим методом). Спробуйте підкрутити інтенсивність нижче — для різних пісень оптимальне значення відрізняється. На моно-файлах розділення недоступне.</span>
       </div>
 
       <div class="intensityblock">
-        <div class="ilabel">Інтенсивність вирізання вокалу з мінусу <b id="intensityVal">85%</b></div>
+        <div class="ilabel"><span data-i18n-local="intensityLabel">Інтенсивність вирізання вокалу з мінусу</span> <b id="intensityVal">85%</b></div>
         <input type="range" id="intensity" min="30" max="100" step="5" value="85" />
-        <div class="isub">Менше — м'якше, більше басу й натуральності. Більше — агресивніше прибирає вокал, але може з'явитись «фейзовий» присмак звуку.</div>
+        <div class="isub" data-i18n-local="intensitySub">Менше — м'якше, більше басу й натуральності. Більше — агресивніше прибирає вокал, але може з'явитись «фейзовий» присмак звуку.</div>
       </div>
 
       <div class="editor">
-        <div class="elabel">Редагування вокалу</div>
-        <div class="esub">Виділіть ділянку мишкою на хвилі вокалу (наприклад, невдалий рядок чи ад-ліб) і натисніть «Вирізати». Вирізана ділянка просто замовкне — тайминг усієї доріжки не зміниться, тож при обʼєднанні з мінусом все залишиться синхронним, тільки без вокалу в цьому місці.</div>
+        <div class="elabel" data-i18n-local="editorLabel">Редагування вокалу</div>
+        <div class="esub" data-i18n-local="editorSub">Виділіть ділянку мишкою на хвилі вокалу (наприклад, невдалий рядок чи ад-ліб) і натисніть «Вирізати». Вирізана ділянка просто замовкне — тайминг усієї доріжки не зміниться, тож при обʼєднанні з мінусом все залишиться синхронним, тільки без вокалу в цьому місці.</div>
         <div class="ecanvaswrap">
           <canvas id="vocalWave"></canvas>
         </div>
         <div class="cutrow">
-          <button class="btn pink" id="cutBtn" disabled>✂ Вирізати виділене</button>
-          <button class="btn ghost" id="undoCutBtn">Скасувати останню</button>
-          <button class="btn ghost" id="resetCutsBtn">Скинути всі вирізки</button>
+          <button class="btn pink" id="cutBtn" disabled data-i18n-local="cutBtn">✂ Вирізати виділене</button>
+          <button class="btn ghost" id="undoCutBtn" data-i18n-local="undoCutBtn">Скасувати останню</button>
+          <button class="btn ghost" id="resetCutsBtn" data-i18n-local="resetCutsBtn">Скинути всі вирізки</button>
         </div>
         <div class="cutlist" id="cutList"></div>
       </div>
 
       <div class="cards">
         <div class="card instr">
-          <h3>Мінус <span>інструментал, без змін</span></h3>
+          <h3><span data-i18n-local="cardInstrTitle">Мінус</span> <span data-i18n-local="cardInstrSub">інструментал, без змін</span></h3>
           <div class="btnrow">
-            <button class="btn violet" id="playInstr">▶ Прослухати</button>
-            <button class="btn solid-violet" id="dlInstr">Завантажити</button>
+            <button class="btn violet" id="playInstr" data-i18n-local="listen">▶ Прослухати</button>
+            <button class="btn solid-violet" id="dlInstr" data-i18n-local="download">Завантажити</button>
           </div>
         </div>
         <div class="card vocal">
-          <h3>Вокал <span>з урахуванням вирізок</span></h3>
+          <h3><span data-i18n-local="cardVocalTitle">Вокал</span> <span data-i18n-local="cardVocalSub">з урахуванням вирізок</span></h3>
           <div class="btnrow">
-            <button class="btn pink" id="playVocal">▶ Прослухати</button>
-            <button class="btn solid-pink" id="dlVocal">Завантажити</button>
+            <button class="btn pink" id="playVocal" data-i18n-local="listen">▶ Прослухати</button>
+            <button class="btn solid-pink" id="dlVocal" data-i18n-local="download">Завантажити</button>
           </div>
         </div>
         <div class="card merged">
-          <h3>Обʼєднане <span>мінус + вокал з вирізками</span></h3>
+          <h3><span data-i18n-local="cardMergedTitle">Обʼєднане</span> <span data-i18n-local="cardMergedSub">мінус + вокал з вирізками</span></h3>
           <div class="btnrow">
-            <button class="btn amber" id="playMerged">▶ Прослухати</button>
-            <button class="btn solid-amber" id="dlMerged">Завантажити</button>
+            <button class="btn amber" id="playMerged" data-i18n-local="listen">▶ Прослухати</button>
+            <button class="btn solid-amber" id="dlMerged" data-i18n-local="download">Завантажити</button>
           </div>
         </div>
       </div>
 
       <div class="row">
-        <button class="btn ghost" id="playOrig">▶ Оригінал</button>
-        <button class="btn ghost" id="stopBtn">■ Стоп</button>
+        <button class="btn ghost" id="playOrig" data-i18n-local="playOrig">▶ Оригінал</button>
+        <button class="btn ghost" id="stopBtn" data-i18n-local="stopBtn">■ Стоп</button>
       </div>
     </div>
 
-    <div class="toolnav">Потрібно ще й підняти гучність та вирівняти звук? → <a href="index.html">Окремий інструмент MASTER.WAV</a></div>
-    <div class="toolnav">← <a href="index.html">Усі аудіо-інструменти</a></div>
+    <div class="toolnav"><span data-i18n-local="toolnavMaster">Потрібно ще й підняти гучність та вирівняти звук? →</span> <a href="index.html" data-i18n-local="toolnavMasterLink">Окремий інструмент MASTER.WAV</a></div>
+    <div class="toolnav">← <a href="index.html" data-i18n-local="toolnavAllLink">Усі аудіо-інструменти</a></div>
 
   </div>
 
-  <p style="text-align:center;color:rgba(255,255,255,.3);font-size:12px;margin-top:26px">Обробка звуку виконується Web Audio API безпосередньо у вашому браузері. Файли не зберігаються і не передаються нікуди.</p>
+  <p style="text-align:center;color:rgba(255,255,255,.3);font-size:12px;margin-top:26px" data-i18n-local="footNote">Обробка звуку виконується Web Audio API безпосередньо у вашому браузері. Файли не зберігаються і не передаються нікуди.</p>
 </div>
 
 <footer>
@@ -354,6 +354,105 @@
   let currentSource = null;
   let instrIntensity = 0.85;
 
+  const VL = {
+    uk: {
+      audioStudioLink: 'Аудіо-студія',
+      pageSub: 'Розділення, вирізання та повторне зведення вокалу — усе прямо у браузері, нічого не завантажується на сервер.',
+      dropCta: 'Перетягніть трек сюди або натисніть, щоб обрати файл',
+      dropSub: 'MP3, WAV, M4A, OGG — потрібен стерео-файл, обробка повністю локальна',
+      clearBtn: 'Обрати інший файл',
+      noteboxBold: 'Як це працює:',
+      noteboxText: 'розділення виконується через скасування фази центрального каналу в частотній смузі вокалу (бас і верхні частоти залишаються майже незмінними, щоб не втрачати «м\'ясо» мікса) — це не повноцінний ШІ-сепаратор доріжок. Якість сильно залежить від конкретного треку: краще спрацьовує там, де вокал сухий і зведений рівно по центру; гірше — там, де є ревер, подвоєння вокалу чи стерео-розширення (тоді прибрати голос повністю фізично неможливо цим методом). Спробуйте підкрутити інтенсивність нижче — для різних пісень оптимальне значення відрізняється. На моно-файлах розділення недоступне.',
+      intensityLabel: 'Інтенсивність вирізання вокалу з мінусу',
+      intensitySub: 'Менше — м\'якше, більше басу й натуральності. Більше — агресивніше прибирає вокал, але може з\'явитись «фейзовий» присмак звуку.',
+      editorLabel: 'Редагування вокалу',
+      editorSub: 'Виділіть ділянку мишкою на хвилі вокалу (наприклад, невдалий рядок чи ад-ліб) і натисніть «Вирізати». Вирізана ділянка просто замовкне — тайминг усієї доріжки не зміниться, тож при обʼєднанні з мінусом все залишиться синхронним, тільки без вокалу в цьому місці.',
+      cutBtn: '✂ Вирізати виділене',
+      undoCutBtn: 'Скасувати останню',
+      resetCutsBtn: 'Скинути всі вирізки',
+      cardInstrTitle: 'Мінус', cardInstrSub: 'інструментал, без змін',
+      cardVocalTitle: 'Вокал', cardVocalSub: 'з урахуванням вирізок',
+      cardMergedTitle: 'Обʼєднане', cardMergedSub: 'мінус + вокал з вирізками',
+      listen: '▶ Прослухати', download: 'Завантажити',
+      playOrig: '▶ Оригінал', stopBtn: '■ Стоп',
+      toolnavMaster: 'Потрібно ще й підняти гучність та вирівняти звук? →', toolnavMasterLink: 'Окремий інструмент MASTER.WAV',
+      toolnavAllLink: 'Усі аудіо-інструменти',
+      footNote: 'Обробка звуку виконується Web Audio API безпосередньо у вашому браузері. Файли не зберігаються і не передаються нікуди.',
+      defaultProgressLabel: 'Обробка…', mbUnit: 'МБ',
+      recalcProgress: 'Перерахунок мінусу…',
+      recalcStatusBusy: 'Перераховую мінус із новою інтенсивністю…',
+      recalcStatusOk: 'Мінус перераховано з новою інтенсивністю.',
+      recalcStatusErr: 'Не вдалося перерахувати мінус. Спробуйте ще раз.',
+      readingFile: (mb) => `Читання файлу (${mb} МБ)…`,
+      decodingAudio: 'Декодування аудіо…',
+      decodingStatusBusy: 'Декодування аудіо… (для великих файлів це може зайняти до хвилини)',
+      monoError: 'Це моно-файл — розділення вокалу недоступне (потрібен стерео-запис).',
+      calcMinusProgress: 'Розрахунок мінусу…',
+      processingStatusBusy: 'Обробка триває…',
+      calcVocalProgress: 'Розрахунок вокалу…',
+      doneProgress: 'Готово',
+      readyStatusOk: 'Готово. Виділяйте ділянки вокалу для вирізання або одразу прослуховуйте/завантажуйте.',
+      readError: (reason) => `Не вдалося обробити цей файл (${reason}). Спробуйте інший MP3/WAV-файл або інший браузер.`,
+      cutDoneStatus: 'Ділянку вирізано (замінено тишею). Можна прослухати результат нижче.',
+      encodingMinus: 'Кодування WAV (мінус)…', encodingVocal: 'Кодування WAV (вокал)…', encodingMerged: 'Кодування WAV (обʼєднане)…',
+      exportDone: 'Готово! Файл завантажено.', exportError: 'Помилка експорту. Спробуйте ще раз.',
+      separationTimeout: 'Обробка зайняла надто багато часу. Спробуйте інший браузер (Chrome) або коротший файл.'
+    },
+    en: {
+      audioStudioLink: 'Audio Studio',
+      pageSub: 'Separate, cut, and re-mix vocals — right in the browser, nothing is uploaded to a server.',
+      dropCta: 'Drag a track here or tap to choose a file',
+      dropSub: 'MP3, WAV, M4A, OGG — requires a stereo file, fully local processing',
+      clearBtn: 'Choose another file',
+      noteboxBold: 'How it works:',
+      noteboxText: "separation works by cancelling the phase of the center channel within the vocal frequency band (bass and highs stay nearly untouched so the mix doesn't lose its \"body\") — this is not a full AI stem separator. Quality depends heavily on the specific track: it works best when the vocal is dry and panned dead-center; worse when there's reverb, vocal doubling, or stereo widening (in that case it's physically impossible to fully remove the voice with this method). Try adjusting the intensity below — the optimal value differs from song to song. Separation isn't available on mono files.",
+      intensityLabel: 'Vocal removal intensity from the instrumental',
+      intensitySub: 'Lower — softer, more bass and natural tone. Higher — removes vocals more aggressively, but may introduce a "phasey" texture.',
+      editorLabel: 'Vocal editor',
+      editorSub: 'Select a region on the vocal waveform with your mouse (e.g. a bad line or ad-lib) and click "Cut". The cut region simply goes silent — the timing of the whole track stays the same, so it stays in sync when merged with the instrumental, just without vocals in that spot.',
+      cutBtn: '✂ Cut selection',
+      undoCutBtn: 'Undo last cut',
+      resetCutsBtn: 'Reset all cuts',
+      cardInstrTitle: 'Instrumental', cardInstrSub: 'unchanged',
+      cardVocalTitle: 'Vocal', cardVocalSub: 'with cuts applied',
+      cardMergedTitle: 'Merged', cardMergedSub: 'instrumental + edited vocal',
+      listen: '▶ Listen', download: 'Download',
+      playOrig: '▶ Original', stopBtn: '■ Stop',
+      toolnavMaster: 'Also need to boost loudness and even out the sound? →', toolnavMasterLink: 'Separate tool: MASTER.WAV',
+      toolnavAllLink: 'All audio tools',
+      footNote: 'Audio processing runs via the Web Audio API directly in your browser. Files are never stored or sent anywhere.',
+      defaultProgressLabel: 'Processing…', mbUnit: 'MB',
+      recalcProgress: 'Recalculating instrumental…',
+      recalcStatusBusy: 'Recalculating the instrumental with the new intensity…',
+      recalcStatusOk: 'Instrumental recalculated with the new intensity.',
+      recalcStatusErr: 'Failed to recalculate the instrumental. Please try again.',
+      readingFile: (mb) => `Reading file (${mb} MB)…`,
+      decodingAudio: 'Decoding audio…',
+      decodingStatusBusy: 'Decoding audio… (large files can take up to a minute)',
+      monoError: "This is a mono file — vocal separation isn't available (a stereo recording is required).",
+      calcMinusProgress: 'Calculating instrumental…',
+      processingStatusBusy: 'Processing…',
+      calcVocalProgress: 'Calculating vocal…',
+      doneProgress: 'Done',
+      readyStatusOk: 'Ready. Select vocal regions to cut, or listen/download right away.',
+      readError: (reason) => `Couldn't process this file (${reason}). Try another MP3/WAV file or a different browser.`,
+      cutDoneStatus: 'Region cut (replaced with silence). You can listen to the result below.',
+      encodingMinus: 'Encoding WAV (instrumental)…', encodingVocal: 'Encoding WAV (vocal)…', encodingMerged: 'Encoding WAV (merged)…',
+      exportDone: 'Done! File downloaded.', exportError: 'Export error. Please try again.',
+      separationTimeout: 'Processing took too long. Try another browser (Chrome) or a shorter file.'
+    }
+  };
+  let vLang = localStorage.getItem('lang') || 'uk';
+  function vt(key){ return VL[vLang][key]; }
+  function applyLocalI18n(){
+    vLang = localStorage.getItem('lang') || 'uk';
+    document.querySelectorAll('[data-i18n-local]').forEach(el => {
+      const k = el.getAttribute('data-i18n-local');
+      if(VL[vLang][k] !== undefined) el.textContent = VL[vLang][k];
+    });
+  }
+  window.onLangChange = function(){ applyLocalI18n(); };
+
   function setStatus(msg, cls){
     statusEl.textContent = msg || '';
     statusEl.className = 'status' + (cls ? ' ' + cls : '');
@@ -369,7 +468,7 @@
   }
   function setProgress(pct, label){
     progFill.style.width = Math.round(pct*100) + '%';
-    progText.textContent = (label || 'Обробка…') + ' ' + Math.round(pct*100) + '%';
+    progText.textContent = (label || vt('defaultProgressLabel')) + ' ' + Math.round(pct*100) + '%';
   }
 
   intensitySlider.addEventListener('input', () => {
@@ -380,20 +479,20 @@
     if (!originalBuffer || originalBuffer.numberOfChannels < 2) return;
     setBusy(true);
     showProgress(true);
-    setProgress(0, 'Перерахунок мінусу…');
-    setStatus('Перераховую мінус із новою інтенсивністю…', 'busy');
+    setProgress(0, vt('recalcProgress'));
+    setStatus(vt('recalcStatusBusy'), 'busy');
     try{
       instrBuffer = await withTimeout(
-        buildVariantWithProgress(originalBuffer, 'instrumental', p => setProgress(p, 'Перерахунок мінусу…'), { intensity: instrIntensity }),
-        90000,
-        'Обробка зайняла надто багато часу. Спробуйте інший браузер (Chrome) або коротший файл.'
+        buildVariantWithProgress(originalBuffer, 'instrumental', p => setProgress(p, vt('recalcProgress')), { intensity: instrIntensity }),
+        separationTimeoutMs(originalBuffer),
+        vt('separationTimeout')
       );
       showProgress(false);
-      setStatus('Мінус перераховано з новою інтенсивністю.', 'ok');
+      setStatus(vt('recalcStatusOk'), 'ok');
     }catch(err){
       console.error(err);
       showProgress(false);
-      setStatus('Не вдалося перерахувати мінус. Спробуйте ще раз.', 'err');
+      setStatus(vt('recalcStatusErr'), 'err');
     }finally{
       setBusy(false);
     }
@@ -433,6 +532,11 @@
     ]);
   }
 
+  function separationTimeoutMs(buffer){
+    const duration = buffer.length / buffer.sampleRate;
+    return Math.max(90000, Math.min(240000, duration * 4000));
+  }
+
   function readFileWithSimulatedProgress(file, onProgress){
     const sizeMb = file.size / (1024*1024);
     const estimatedMs = Math.max(600, Math.min(15000, sizeMb * 180));
@@ -453,19 +557,19 @@
     resetAll();
     showProgress(true);
     const sizeMb = (file.size / (1024*1024)).toFixed(1);
-    setProgress(0, `Читання файлу (${sizeMb} МБ)…`);
-    setStatus(`Читання файлу (${sizeMb} МБ)…`, 'busy');
+    setProgress(0, vt('readingFile')(sizeMb));
+    setStatus(vt('readingFile')(sizeMb), 'busy');
     try{
       if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') await audioCtx.resume();
       const arrayBuf = await withTimeout(
-        readFileWithSimulatedProgress(file, p => setProgress(p, `Читання файлу (${sizeMb} МБ)…`)),
+        readFileWithSimulatedProgress(file, p => setProgress(p, vt('readingFile')(sizeMb))),
         30000,
         'Читання файлу зайняло надто багато часу. Спробуйте закрити інші вкладки, перезавантажити сторінку або обрати інший файл.'
       );
       if (!arrayBuf || arrayBuf.byteLength === 0) throw new Error('Файл порожній або не вдалося його прочитати.');
-      setProgress(0, 'Декодування аудіо…');
-      setStatus('Декодування аудіо… (для великих файлів це може зайняти до хвилини)', 'busy');
+      setProgress(0, vt('decodingAudio'));
+      setStatus(vt('decodingStatusBusy'), 'busy');
       const buf = await withTimeout(
         decode(audioCtx, arrayBuf),
         60000,
@@ -480,34 +584,34 @@
 
       if (buf.numberOfChannels < 2){
         showProgress(false);
-        setStatus('Це моно-файл — розділення вокалу недоступне (потрібен стерео-запис).', 'err');
+        setStatus(vt('monoError'), 'err');
         return;
       }
 
-      setProgress(0, 'Розрахунок мінусу…');
-      setStatus('Обробка триває…', 'busy');
+      setProgress(0, vt('calcMinusProgress'));
+      setStatus(vt('processingStatusBusy'), 'busy');
       instrBuffer = await withTimeout(
-        buildVariantWithProgress(buf, 'instrumental', p => setProgress(p*0.5, 'Розрахунок мінусу…'), { intensity: instrIntensity }),
-        90000,
-        'Обробка зайняла надто багато часу. Спробуйте інший браузер (Chrome) або коротший файл.'
+        buildVariantWithProgress(buf, 'instrumental', p => setProgress(p*0.5, vt('calcMinusProgress')), { intensity: instrIntensity }),
+        separationTimeoutMs(buf),
+        vt('separationTimeout')
       );
-      setProgress(0.5, 'Розрахунок вокалу…');
+      setProgress(0.5, vt('calcVocalProgress'));
       vocalBuffer = await withTimeout(
-        buildVariantWithProgress(buf, 'vocal', p => setProgress(0.5 + p*0.5, 'Розрахунок вокалу…')),
-        90000,
-        'Обробка зайняла надто багато часу. Спробуйте інший браузер (Chrome) або коротший файл.'
+        buildVariantWithProgress(buf, 'vocal', p => setProgress(0.5 + p*0.5, vt('calcVocalProgress'))),
+        separationTimeoutMs(buf),
+        vt('separationTimeout')
       );
-      setProgress(1, 'Готово');
+      setProgress(1, vt('doneProgress'));
       showProgress(false);
 
       panel.classList.add('show');
       drawEditor();
-      setStatus('Готово. Виділяйте ділянки вокалу для вирізання або одразу прослуховуйте/завантажуйте.', 'ok');
+      setStatus(vt('readyStatusOk'), 'ok');
     }catch(err){
       console.error(err);
       showProgress(false);
       const reason = (err && (err.message || err.name)) ? (err.message || err.name) : 'невідома помилка';
-      setStatus(`Не вдалося обробити цей файл (${reason}). Спробуйте інший MP3/WAV-файл або інший браузер.`, 'err');
+      setStatus(vt('readError')(reason), 'err');
     }
   }
 
@@ -730,7 +834,7 @@
     cutBtn.disabled = true;
     renderCutList();
     drawEditor();
-    setStatus('Ділянку вирізано (замінено тишею). Можна прослухати результат нижче.', 'ok');
+    setStatus(vt('cutDoneStatus'), 'ok');
   });
   undoCutBtn.addEventListener('click', () => {
     cuts.pop();
@@ -849,27 +953,29 @@
 
   dlInstrBtn.addEventListener('click', () => {
     if (!instrBuffer) return;
-    setBusy(true); setStatus('Кодування WAV (мінус)…', 'busy');
-    try{ downloadBuffer(instrBuffer, '-minus'); setStatus('Готово! Файл завантажено.', 'ok'); }
-    catch(err){ console.error(err); setStatus('Помилка експорту. Спробуйте ще раз.', 'err'); }
+    setBusy(true); setStatus(vt('encodingMinus'), 'busy');
+    try{ downloadBuffer(instrBuffer, '-minus'); setStatus(vt('exportDone'), 'ok'); }
+    catch(err){ console.error(err); setStatus(vt('exportError'), 'err'); }
     finally{ setBusy(false); }
   });
   dlVocalBtn.addEventListener('click', () => {
     if (!vocalBuffer) return;
-    setBusy(true); setStatus('Кодування WAV (вокал)…', 'busy');
-    try{ downloadBuffer(getEditedVocal(), '-vocal'); setStatus('Готово! Файл завантажено.', 'ok'); }
-    catch(err){ console.error(err); setStatus('Помилка експорту. Спробуйте ще раз.', 'err'); }
+    setBusy(true); setStatus(vt('encodingVocal'), 'busy');
+    try{ downloadBuffer(getEditedVocal(), '-vocal'); setStatus(vt('exportDone'), 'ok'); }
+    catch(err){ console.error(err); setStatus(vt('exportError'), 'err'); }
     finally{ setBusy(false); }
   });
   dlMergedBtn.addEventListener('click', () => {
     if (!instrBuffer || !vocalBuffer) return;
-    setBusy(true); setStatus('Кодування WAV (обʼєднане)…', 'busy');
-    try{ downloadBuffer(getMerged(), '-merged'); setStatus('Готово! Файл завантажено.', 'ok'); }
-    catch(err){ console.error(err); setStatus('Помилка експорту. Спробуйте ще раз.', 'err'); }
+    setBusy(true); setStatus(vt('encodingMerged'), 'busy');
+    try{ downloadBuffer(getMerged(), '-merged'); setStatus(vt('exportDone'), 'ok'); }
+    catch(err){ console.error(err); setStatus(vt('exportError'), 'err'); }
     finally{ setBusy(false); }
   });
 
   window.addEventListener('resize', () => { if (vocalBuffer) drawEditor(); });
+
+  applyLocalI18n();
 })();
 </script>
 </body>

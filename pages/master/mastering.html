@@ -328,11 +328,13 @@
       dbUnit: ' дБ',
       readingFile: 'Читання файлу…', decodingAudio: 'Декодування аудіо…', done: 'Готово',
       decodingAudioSlow: 'Декодування аудіо… (у Safari це може тривати до хвилини, будь ласка, зачекай)',
+      decodingRetry: 'Декодування зависло — пробую ще раз…',
       renderingLabel: 'Обробка треку…', renderingSlow: 'Обробка треку… (для довгих треків це може тривати довше, зачекай)',
       renderTimeout: 'Обробка зайняла надто багато часу. Спробуй коротший трек або інший браузер.',
       statusReady: 'Готово. Налаштуйте параметри й натисніть «Авто-мастеринг» або одразу завантажте.',
       statusReadError: (reason) => `Не вдалося прочитати цей файл (${reason}). Спробуйте інший MP3/WAV-файл або інший браузер.`,
       decodeTimeout: 'Декодування зайняло надто багато часу. Спробуйте інший файл або браузер.',
+      decodeStuckIOS: 'Safari/Chrome на iOS не змогли декодувати цей файл (відоме обмеження WebKit). Спробуйте: 1) переекспортувати файл у MP3 без обкладинки/тегів, 2) інший файл, або 3) відкрити сторінку на комп’ютері.',
       statusAutoApplied: 'Застосовано пресет «Авто-мастеринг». Можете підлаштувати повзунки або одразу завантажити.',
       statusProcessing: 'Обробка треку… (рендеринг відбувається локально, це може зайняти кілька секунд)',
       statusExportDone: 'Готово! Файл завантажено на ваш пристрій — нічого не збережено ніде більше.',
@@ -355,11 +357,13 @@
       dbUnit: ' dB',
       readingFile: 'Reading file…', decodingAudio: 'Decoding audio…', done: 'Done',
       decodingAudioSlow: 'Decoding audio… (in Safari this can take up to a minute, please wait)',
+      decodingRetry: 'Decoding got stuck — retrying…',
       renderingLabel: 'Processing the track…', renderingSlow: 'Processing the track… (long tracks can take longer, please wait)',
       renderTimeout: 'Processing took too long. Try a shorter track or a different browser.',
       statusReady: 'Ready. Adjust the sliders and hit "Auto-master", or download right away.',
       statusReadError: (reason) => `Couldn't read this file (${reason}). Try another MP3/WAV file or a different browser.`,
       decodeTimeout: 'Decoding took too long. Try another file or browser.',
+      decodeStuckIOS: "Safari/Chrome on iOS couldn't decode this file (a known WebKit limitation). Try: 1) re-exporting the file as MP3 without cover art/tags, 2) a different file, or 3) opening this page on a computer.",
       statusAutoApplied: 'Applied the "Auto-master" preset. You can fine-tune the sliders or download right away.',
       statusProcessing: 'Processing the track… (rendering happens locally, this can take a few seconds)',
       statusExportDone: "Done! The file was downloaded to your device — nothing was saved anywhere else.",
@@ -501,6 +505,30 @@
     });
   }
 
+  // iOS Safari/Chrome (both run on WebKit) has a known decodeAudioData bug where decoding
+  // can hang forever for certain files without ever calling the success or error callback.
+  // A fresh AudioContext often "unsticks" it, so we retry once with a brand new context
+  // before giving up, and we don't make the user wait too long to find out.
+  async function decodeWithRetry(arrayBuf, fileSize, onRetry){
+    const timeoutMs = Math.max(12000, Math.min(45000, fileSize / 2500));
+    try{
+      return await withTimeout(decode(audioCtx, arrayBuf.slice(0)), timeoutMs, mt('decodeTimeout'));
+    }catch(err){
+      const isTimeout = err && err.message === mt('decodeTimeout');
+      if (!isTimeout) throw err;
+      if (typeof onRetry === 'function') onRetry();
+      try{ await audioCtx.close(); }catch(e){}
+      audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') await audioCtx.resume();
+      try{
+        return await withTimeout(decode(audioCtx, arrayBuf.slice(0)), timeoutMs, mt('decodeTimeout'));
+      }catch(err2){
+        const stillTimeout = err2 && err2.message === mt('decodeTimeout');
+        throw new Error(stillTimeout ? mt('decodeStuckIOS') : (err2.message || err2.name || 'decode error'));
+      }
+    }
+  }
+
   async function loadFile(file){
     if(dropEl.classList.contains('busy')) return;
     dropEl.classList.add('busy');
@@ -512,8 +540,9 @@
     const estimatedMs = Math.max(500, Math.min(6000, file.size / 4000));
     const startedAt = Date.now();
     let stageDone = false;
+    let isRetrying = false;
     const progressTimer = setInterval(() => {
-      if(stageDone) return;
+      if(stageDone || isRetrying) return;
       const elapsed = Date.now() - startedAt;
       const pct = Math.min(0.92, elapsed/estimatedMs);
       showProgress(pct, elapsed > 6000 ? mt('decodingAudioSlow') : mt('decodingAudio'));
@@ -526,11 +555,10 @@
       if (!arrayBuf || arrayBuf.byteLength === 0){
         throw new Error('Файл порожній або не вдалося його прочитати.');
       }
-      const buf = await withTimeout(
-        decode(audioCtx, arrayBuf.slice(0)),
-        Math.max(60000, Math.min(180000, file.size / 3000)),
-        mt('decodeTimeout')
-      );
+      const buf = await decodeWithRetry(arrayBuf, file.size, () => {
+        isRetrying = true;
+        showProgress(0.92, mt('decodingRetry'));
+      });
       stageDone = true;
       clearInterval(progressTimer);
       showProgress(1, mt('done'));

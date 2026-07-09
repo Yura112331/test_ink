@@ -452,7 +452,8 @@
       aiOrtLoadError: "Не вдалося завантажити бібліотеку onnxruntime-web. Перевір інтернет-з'єднання.",
       aiModelDownloadError: (status) => `Не вдалося завантажити AI-модель (HTTP ${status})`,
       aiInitError: (msg) => `Не вдалося ініціалізувати AI-модель у цьому браузері: ${msg}`,
-      aiChunkTimeout: "Обробка одного фрагмента зайняла надто багато часу. Спробуй коротший трек, інший браузер (Chrome) або на комп'ютері замість телефону."
+      aiChunkTimeout: "Обробка одного фрагмента зайняла надто багато часу. Спробуй коротший трек, інший браузер (Chrome) або на комп'ютері замість телефону.",
+      readTimeout: 'Читання файлу зайняло надто багато часу. Спробуйте закрити інші вкладки, перезавантажити сторінку або обрати інший файл.'
     },
     en: {
       audioStudioLink: 'Audio Studio',
@@ -508,7 +509,8 @@
       aiOrtLoadError: 'Failed to load the onnxruntime-web library. Check your internet connection.',
       aiModelDownloadError: (status) => `Failed to download the AI model (HTTP ${status})`,
       aiInitError: (msg) => `Failed to initialize the AI model in this browser: ${msg}`,
-      aiChunkTimeout: 'Processing one chunk took too long. Try a shorter track, a different browser (Chrome), or a computer instead of a phone.'
+      aiChunkTimeout: 'Processing one chunk took too long. Try a shorter track, a different browser (Chrome), or a computer instead of a phone.',
+      readTimeout: 'Reading the file took too long. Try closing other tabs, reloading the page, or choosing a different file.'
     }
   };
   let vLang = localStorage.getItem('lang') || 'uk';
@@ -623,6 +625,16 @@
     return Math.max(90000, Math.min(240000, duration * 4000));
   }
 
+  function readFileViaFileReader(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error || new Error('FileReader error'));
+      reader.onabort = () => reject(new Error('FileReader aborted'));
+      try{ reader.readAsArrayBuffer(file); }catch(e){ reject(e); }
+    });
+  }
+
   function readFileWithSimulatedProgress(file, onProgress){
     const sizeMb = file.size / (1024*1024);
     const estimatedMs = Math.max(600, Math.min(15000, sizeMb * 180));
@@ -633,7 +645,10 @@
       const pct = Math.min(0.92, (Date.now() - start) / estimatedMs);
       onProgress(pct);
     }, 120);
-    const p = file.arrayBuffer();
+    const p = Promise.race([
+      file.arrayBuffer(),
+      readFileViaFileReader(file)
+    ]);
     p.then(() => { done = true; clearInterval(timer); onProgress(1); },
            () => { done = true; clearInterval(timer); });
     return p;
@@ -845,11 +860,13 @@
     setStatus(vt('readingFile')(sizeMb), 'busy');
     try{
       if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') await audioCtx.resume();
+      if (audioCtx.state === 'suspended'){
+        audioCtx.resume().catch(() => {});
+      }
       const arrayBuf = await withTimeout(
         readFileWithSimulatedProgress(file, p => setProgress(p, vt('readingFile')(sizeMb))),
-        60000,
-        'Читання файлу зайняло надто багато часу. Спробуйте закрити інші вкладки, перезавантажити сторінку або обрати інший файл.'
+        Math.max(10000, Math.min(60000, parseFloat(sizeMb) * 3000)),
+        vt('readTimeout')
       );
       if (!arrayBuf || arrayBuf.byteLength === 0) throw new Error('Файл порожній або не вдалося його прочитати.');
       setProgress(0, vt('decodingAudio'));

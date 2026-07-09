@@ -2252,7 +2252,10 @@ async function runRecording(opts){
   const { audioElement, start, end, onProgress } = opts;
   return new Promise(async (resolve) => {
     if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-    if(audioCtx.state === 'suspended'){ await audioCtx.resume(); }
+    if(audioCtx.state === 'suspended'){
+      try{ await Promise.race([audioCtx.resume(), new Promise((_,rej)=>setTimeout(()=>rej(new Error('audioCtx resume timeout')), 8000))]); }
+      catch(e){ console.warn('audioCtx.resume() timed out, proceeding anyway', e); }
+    }
 
     let localSourceNode;
     try{

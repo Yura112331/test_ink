@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../../css/style.css"/>
   <style>
-    .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 24px; }
+    .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 32px; margin-top: 24px; }
     .tool-card {
       background: var(--s100);
       border: 1px solid rgba(255,255,255,.06);
@@ -35,7 +35,7 @@
       background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
       color: rgba(255,255,255,.5); font-size: .8rem; text-align: center; max-width: 640px; margin-left: auto; margin-right: auto;
     }
-    @media (max-width: 900px) { .tool-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) { .tool-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -133,6 +133,13 @@
         <span class="tool-cta" style="color:var(--cyan)" data-i18n-local="eqCta">Відкрити EQUALIZER →</span>
       </a>
 
+      <a href="multitrack.html" class="tool-card reveal" style="transition-delay:.3s">
+        <div class="tool-icon" style="background:rgba(140,255,107,.1);border:1px solid rgba(140,255,107,.3)">🎚️</div>
+        <div class="tool-title">Multitrack</div>
+        <p class="tool-desc" data-i18n-local="mtDesc">Накладай кілька доріжок одна на одну, вирівнюй по таймінгу з точністю до мілісекунди й зведи все в один файл.</p>
+        <span class="tool-cta" style="color:#8CFF6B" data-i18n-local="mtCta">Відкрити MULTITRACK →</span>
+      </a>
+
     </div>
 
     <div class="privacy-strip reveal" data-i18n-local="privacyStrip">
@@ -195,6 +202,8 @@ const IL = {
     vocalCta: 'Відкрити VOCAL SPLIT →',
     eqDesc: 'Завантаж картинку чи відео та трек — отримай промо-відео зі спектр-еквалайзером для TikTok, Reels та Shorts.',
     eqCta: 'Відкрити EQUALIZER →',
+    mtDesc: 'Накладай кілька доріжок одна на одну, вирівнюй по таймінгу з точністю до мілісекунди й зведи все в один файл.',
+    mtCta: 'Відкрити MULTITRACK →',
     privacyStrip: '🔒 Уся обробка звуку та відео відбувається локально у вашому браузері через Web Audio API — жоден файл нікуди не завантажується.'
   },
   en: {
@@ -208,6 +217,8 @@ const IL = {
     vocalCta: 'Open VOCAL SPLIT →',
     eqDesc: 'Upload a picture or video and a track — get a promo video with a spectrum equalizer for TikTok, Reels, and Shorts.',
     eqCta: 'Open EQUALIZER →',
+    mtDesc: 'Layer multiple tracks on top of each other, align them to the millisecond, and mix it all into one file.',
+    mtCta: 'Open MULTITRACK →',
     privacyStrip: '🔒 All audio and video processing happens locally in your browser via the Web Audio API — no file is ever uploaded anywhere.'
   }
 };

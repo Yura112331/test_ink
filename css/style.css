@@ -1,9 +1,9 @@
 :root {
-  --brick: #B8452C;    /* brick red — primary accent */
-  --indigo: #241F3D;   /* dark indigo — gradient partner / deep accent */
-  --violet: #8D84C4;   /* muted violet-blue — tertiary highlight */
-  --crimson: #6E1423;  /* dark red — supplementary depth accent */
-  --paper: #EFEAE2;    /* warm off-white — used sparingly for high-contrast text/labels */
+  --brick: #B8452C;    
+  --indigo: #241F3D;   
+  --violet: #8D84C4;   
+  --crimson: #6E1423;  
+  --paper: #EFEAE2;    
   --black: #000000;
   --s100: #0F0F0F;
   --s200: #161616;
@@ -958,7 +958,6 @@ footer::before {
   100% { height: 14px; }
 }
 
-/* progress ramps the whole equalizer up as the real page-load percentage increases */
 #loading-screen[data-stage="0"] .loading-eq { opacity: .35; filter: saturate(.6); }
 #loading-screen[data-stage="1"] .loading-eq { opacity: .6; filter: saturate(.8); }
 #loading-screen[data-stage="2"] .loading-eq { opacity: .85; filter: saturate(1); }

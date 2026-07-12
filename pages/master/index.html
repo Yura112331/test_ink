@@ -95,6 +95,7 @@
   <a href="../portfolio.html" data-i18n="nav.portfolio">Портфоліо</a>
   <a href="../contact.html" data-i18n="nav.contact">Контакти</a>
   <a href="index.html" data-i18n="nav.master">Мастеринг</a>
+  <a href="../studio/index.html" data-i18n="nav.studio">Studio</a>
   <div class="mobile-lang-switch">
     <span class="lang-ua lang-toggle active" data-lang="uk">UA</span>
     <span class="lang-sep">|</span>
@@ -146,6 +147,13 @@
         <span class="tool-cta" style="color:#8CFF6B" data-i18n-local="mtCta">Відкрити MULTITRACK →</span>
       </a>
 
+      <a href="video-to-audio.html" class="tool-card reveal" style="transition-delay:.4s">
+        <div class="tool-icon" style="background:rgba(184,69,44,.1);border:1px solid rgba(184,69,44,.3)">🎬</div>
+        <div class="tool-title" data-i18n-local="vtaTitle">Відео → Аудіо</div>
+        <p class="tool-desc" data-i18n-local="vtaDesc">Витягни аудіодоріжку з будь-якого відео, обріж, підніми гучність та завантаж у WAV чи Opus.</p>
+        <span class="tool-cta" style="color:var(--brick)" data-i18n-local="vtaCta">Відкрити VIDEO.AUDIO →</span>
+      </a>
+
     </div>
 
     <div class="privacy-strip reveal" data-i18n-local="privacyStrip">
@@ -171,7 +179,7 @@
           <li><a href="../services.html" data-i18n="nav.services">Послуги</a></li>
           <li><a href="../portfolio.html" data-i18n="nav.portfolio">Портфоліо</a></li>
           <li><a href="../contact.html" data-i18n="nav.contact">Контакти</a></li>
-          <li><a href="index.html" data-i18n="nav.master">Мастеринг</a></li><li><a href="../studio/index.html" data-i18n="nav.studio">Studio</a></li>
+          <li><a href="index.html" data-i18n="nav.master">Мастеринг</a></li><li><a href="../studio/index.html" data-i18n="nav.studio">Studio</a></li><li><a href="video-to-audio.html" data-i18n="nav.videoAudio">Video → Audio</a></li>
         </ul>
       </div>
       <div>
@@ -210,6 +218,9 @@ const IL = {
     eqCta: 'Відкрити EQUALIZER →',
     mtDesc: 'Накладай кілька доріжок одна на одну, вирівнюй по таймінгу з точністю до мілісекунди й зведи все в один файл.',
     mtCta: 'Відкрити MULTITRACK →',
+    vtaTitle: 'Відео → Аудіо',
+    vtaDesc: 'Витягни аудіодоріжку з будь-якого відео, обріж, підніми гучність та завантаж у WAV чи Opus.',
+    vtaCta: 'Відкрити VIDEO.AUDIO →',
     privacyStrip: '🔒 Уся обробка звуку та відео відбувається локально у вашому браузері через Web Audio API — жоден файл нікуди не завантажується.'
   },
   en: {
@@ -225,6 +236,9 @@ const IL = {
     eqCta: 'Open EQUALIZER →',
     mtDesc: 'Layer multiple tracks on top of each other, align them to the millisecond, and mix it all into one file.',
     mtCta: 'Open MULTITRACK →',
+    vtaTitle: 'Video → Audio',
+    vtaDesc: 'Extract the audio track from any video, trim it, boost the volume, and download it as WAV or Opus.',
+    vtaCta: 'Open VIDEO.AUDIO →',
     privacyStrip: '🔒 All audio and video processing happens locally in your browser via the Web Audio API — no file is ever uploaded anywhere.'
   }
 };

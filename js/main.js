@@ -13,7 +13,7 @@ getSoundCloudData()
 
 const translations = {
   uk: {
-    nav: { home:'Головна', about:'Про мене', discography:'Дискографія', services:'Послуги', portfolio:'Портфоліо', contact:'Контакти', order:'Замовити', master:'Студія', studio:'InkBeat Студія' },
+    nav: { home:'Головна', about:'Про мене', discography:'Дискографія', services:'Послуги', portfolio:'Портфоліо', contact:'Контакти', order:'Замовити', master:'Студія', studio:'InkBeat Студія', videoAudio:'Відео → Аудіо' },
     hero: { badge:'Незалежний артист', subtitle:'Музичний артист • Автор пісень • Автор текстів', listen:'Слухати музику', order:'Замовити пісню', contact:"Зв'язатися →" },
     stats: { releases:'Релізів', streams:'Прослуховувань', since:'Рік початку', platforms:'Платформ' },
     releases: { label:'Останні релізи', title:'Моя музика', all:'Вся дискографія →', spotify:'Слухати на SoundCloud', error:'Не вдалося завантажити релізи.', errorHint:'SoundCloud API недоступний.', loading:'Завантажую треки з SoundCloud…' },
@@ -25,7 +25,7 @@ const translations = {
     typeAlbum:'Альбом', typeSingle:'Сингл', typeEP:'EP'
   },
   en: {
-    nav: { home:'Home', about:'About', discography:'Discography', services:'Services', portfolio:'Portfolio', contact:'Contact', order:'Order', master:'Studio', studio:'InkBeat Studio' },
+    nav: { home:'Home', about:'About', discography:'Discography', services:'Services', portfolio:'Portfolio', contact:'Contact', order:'Order', master:'Studio', studio:'InkBeat Studio', videoAudio:'Video → Audio' },
     hero: { badge:'Independent Artist', subtitle:'Music Artist • Songwriter • Lyricist', listen:'Listen to Music', order:'Order a Song', contact:'Contact →' },
     stats: { releases:'Releases', streams:'Streams', since:'Started', platforms:'Platforms' },
     releases: { label:'Latest Releases', title:'My Music', all:'Full Discography →', spotify:'Listen on SoundCloud', error:'Failed to load releases.', errorHint:'SoundCloud API unavailable.', loading:'Loading tracks from SoundCloud…' },
@@ -78,24 +78,17 @@ function initLoading() {
     screen.setAttribute('data-stage', String(stage))
   }
 
-  // Real readiness signals: every real-world thing that has to finish loading
-  // AND running before we consider the page "done" — not a fake timer.
   const tasks = []
 
-  // 1) All sub-resources the browser knows about (images, css, scripts, media).
   tasks.push(new Promise(resolve => {
     if (document.readyState === 'complete') resolve()
     else window.addEventListener('load', () => resolve(), { once: true })
   }))
 
-  // 2) Web fonts actually loaded and ready to paint (avoids flash of unstyled text
-  // counting as "loaded" before the real typography is in).
   if (document.fonts && document.fonts.ready) {
     tasks.push(document.fonts.ready.catch(() => {}))
   }
 
-  // 3) Every <img> on the page fully decoded (covers late-inserted / lazy images
-  // already present in markup at load time).
   tasks.push(Promise.all(
     Array.from(document.images).map(img => {
       if (img.complete) return Promise.resolve()
@@ -106,20 +99,14 @@ function initLoading() {
     })
   ))
 
-  // 4) Any in-flight data fetch kicked off at page start (e.g. the SoundCloud
-  // releases feed on the homepage) — the loader stays up until that data has
-  // actually arrived and is ready to render, not just until assets are cached.
   if (window.__soundcloudDataPromise) {
     tasks.push(window.__soundcloudDataPromise.catch(() => {}))
   }
 
   const allReady = Promise.all(tasks)
 
-  // Hard safety net: never trap the user behind the loader if something stalls.
   const safetyTimeout = new Promise(resolve => setTimeout(resolve, 8000))
 
-  // Progress reflects genuine completion of the tasks above, weighted so the
-  // bar/equalizer only reaches 100% once everything has actually resolved.
   let settledCount = 0
   tasks.forEach(t => {
     Promise.resolve(t).then(() => {
@@ -128,8 +115,6 @@ function initLoading() {
     })
   })
 
-  // Gentle trickle underneath so the bar/equalizer never looks stuck while
-  // waiting on slow network tasks, but it can never finish the job on its own.
   function trickle() {
     if (finished) return
     setProgress(Math.min(progress + (90 - progress) * 0.04 + 0.15, 90))
@@ -138,8 +123,6 @@ function initLoading() {
   requestAnimationFrame(trickle)
 
   Promise.race([allReady, safetyTimeout]).then(() => {
-    // Double rAF: let the browser actually paint the final frame before we
-    // declare victory, so "loaded" also means "rendered on screen".
     requestAnimationFrame(() => requestAnimationFrame(() => {
       finished = true
       setProgress(100)
@@ -275,7 +258,6 @@ function initSlider() {
   dots.forEach((d, i) => d.addEventListener('click', () => show(i)))
   setInterval(() => show((idx + 1) % cards.length), 5000)
 }
-
 
 function initFAQ() {
   document.querySelectorAll('.faq-btn').forEach(btn => {
